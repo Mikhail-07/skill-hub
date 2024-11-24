@@ -1,10 +1,10 @@
 "use client"
 
 import React, { FC, useEffect, useRef, useState, MouseEvent  } from 'react'
-import Card from './Card'
-import MyInput from './MyInput'
+import Card from '../../../components/Card'
+import MyInput from '../../../components/MyInput'
 import RegistrationNotice from './RegistrationNotice'
-import Spinner from './Spiner'
+import Spinner from '../../../components/Spinner'
 import emailjs from 'emailjs-com';
 import InputMask from 'react-input-mask';
 

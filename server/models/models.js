@@ -7,7 +7,8 @@ const User = sequelize.define('user', {
   password: {type: DataTypes.STRING},
   name: {type: DataTypes.STRING},
   surname: {type: DataTypes.STRING},
-  role: {type: DataTypes.STRING, defaultValue: 'USER'}
+  chatId: { type: DataTypes.INTEGER, unique: true },
+  role: {type: DataTypes.STRING, defaultValue: 'USER'},
 })
 
 const Order = sequelize.define('order', {
@@ -68,6 +69,10 @@ const Media = sequelize.define('media', {
   file: {type: DataTypes.STRING, unique: true},
 }) 
 
+const Waitlist = sequelize.define('waitlist', {
+  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+});
+
 User.hasOne(Order)
 Order.belongsTo(User)
 
@@ -104,7 +109,13 @@ Role.belongsTo(Achieve)
 Achieve.hasMany(Media)
 Media.belongsTo(Achieve)
 
+User.hasMany(Waitlist);      
+Waitlist.belongsTo(User);
+
+Course.hasMany(Waitlist);
+Waitlist.belongsTo(Course);  
+
 
 module.exports = {
-  User, Order, OrderCourse, Course, UserGroup, Group, AvailableLesson, Lesson, Achieve, Role, Media
+  User, Order, OrderCourse, Course, UserGroup, Group, AvailableLesson, Lesson, Achieve, Role, Media, Waitlist
 }

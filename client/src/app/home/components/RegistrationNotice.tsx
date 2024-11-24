@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
-import SimpleCell from './SimpleCell';
-import Header from './Header';
+import SimpleCell from '../../../components/SimpleCell';
+import Header from '../../../components/Header';
 import { MdDone } from 'react-icons/md';
 import { IoMdClose } from 'react-icons/io';
 

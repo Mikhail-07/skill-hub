@@ -7,7 +7,8 @@ router.post('/', checkRoleMiddleware('ADMIN'), coursesController.create)// со�
 router.post('/edit', checkRoleMiddleware('ADMIN'), coursesController.edit)// редактирование курса
 router.get('/', coursesController.getAll) // получение курсов для витрины
 router.get('/lessons/:id', coursesController.getCourseLessons)// уроки курса
-router.post('/registration', coursesController.registrationOnCourse) // регистрация
+router.post('/registration', coursesController.registrationOnCourse) // регистрация на курс
+router.post('/waitlist', coursesController.addToWaitlist) // предзапись на курс
 router.get('/:id', coursesController.getOne) // получение курса для ознакомительной карточки
 
 module.exports = router

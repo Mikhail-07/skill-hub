@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "../styles/globals.css";
 import YandexMetrika from "@/components/YandexMetrika";
+import NavBar from "@/components/NavBar";
+import MobXProvider from "@/store/MobXProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -36,9 +38,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        {children}
-        {<YandexMetrika/>}
+      <body className={`${inter.className} pt-[var(--navbar-height)]`}>
+        <MobXProvider>
+          <NavBar />
+          {children}
+          {<YandexMetrika/>}
+        </MobXProvider>
       </body>
     </html>
   );

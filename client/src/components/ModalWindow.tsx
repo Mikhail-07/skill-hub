@@ -35,7 +35,7 @@ const ModalWindow: FC<ModalWindowProps> = ({ children, isOpen, onClose }) => {
         <div
           ref={modalRef}
           onClick={handleInnerClick}
-          className="relative max-w-4xl max-h-full p-4"
+          className="relative max-w-4xl max-h-full p-4 bg-gray-900"
         >
           
           {children}

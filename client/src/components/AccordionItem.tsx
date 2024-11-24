@@ -3,7 +3,7 @@ import React, { FC, ReactNode, useState } from 'react'
 import { MdExpandMore } from 'react-icons/md';
 
 interface AccordionItemProps {
-  title: string;
+  title?: string;
   children: ReactNode;
 }
 

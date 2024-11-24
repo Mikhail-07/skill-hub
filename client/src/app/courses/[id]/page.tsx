@@ -1,4 +1,5 @@
 "use client"
+
 import { fetchCourse } from "@/api/coursesAPI";
 import { useEffect, useState } from "react";
 

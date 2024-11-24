@@ -2,8 +2,9 @@ const uuid = require('uuid')
 const path = require('path')
 const fs = require('fs');
 const { unlink } = require('node:fs/promises');
-const {Course, Lesson, User, OrderCourse} = require('../models/models')
+const { Course, Lesson, User, OrderCourse, Waitlist } = require('../models/models')
 const ApiError = require('../error/ApiError');
+const { Op } = require('sequelize');
 
 const courseFilling = async (title, subTitle, description, price, lessons, img, files) => {
   const fileName = uuid.v4() + '.jpg';
@@ -172,6 +173,49 @@ class CourseController{
       registration = await OrderCourse.create({orderId: user.id, courseId});
     }
     return res.json(registration)
+  }
+
+  async addToWaitlist({ chatId, name, surname, email, courseId }) {
+    try {
+      // Проверяем, есть ли пользователь с такими данными
+      let user = await User.findOne({
+          where: {
+              name: { [Op.iLike]: name },
+              surname: { [Op.iLike]: surname },
+              chatId
+          }
+      });
+
+      // Если пользователь не найден, создаем его
+      if (!user) {
+          user = await User.create({ chatId, name, surname, email });
+      }
+
+      // Проверяем, есть ли уже запись в Waitlist для данного пользователя и курса
+      const existingWaitlistEntry = await Waitlist.findOne({
+          where: {
+              userId: user.id,
+              courseId
+          }
+      });
+
+      if (existingWaitlistEntry) {
+          return { message: 'Вы уже зарегистрированы на курс.' };
+      }
+
+      // Добавляем запись в Waitlist
+      await Waitlist.create({
+          userId: user.id,
+          courseId
+      });
+
+      return {
+          message: 'Спасибо! Мы добавили вас в список предзаписи на курс. Вам придет письмо на почту! 😊\n\nЕсли письмо не пришло или есть вопросы, пишите в саппорт.'
+      };
+    } catch (error) {
+        console.error(error);
+        return { message: 'Ошибка сервера. Попробуйте позже или обратитесь в поддержку.' };
+    }
   }
 }
 

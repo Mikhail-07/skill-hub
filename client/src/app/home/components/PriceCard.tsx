@@ -1,9 +1,9 @@
 import Link from 'next/link'
 import React, { FC } from 'react'
 import { MdDone } from 'react-icons/md'
-import Card from './Card'
-import Header from './Header'
-import SimpleCell from './SimpleCell'
+import Card from '../../../components/Card'
+import Header from '../../../components/Header'
+import SimpleCell from '../../../components/SimpleCell'
 
 interface PriceCardProps{
   header: string,
