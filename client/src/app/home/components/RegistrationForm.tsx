@@ -98,73 +98,73 @@ const RegistrationForm: FC<RegistrationFormProps> = ({isFormModalOpen, onClose})
     return true;
   }
   return (
-    <Card header="Заполните форму">
-          {sendingSuccessful || sendingError ?
-            <RegistrationNotice
-              success={sendingSuccessful}
-              failed={sendingError}
-              onClose={onClose}
+    <>
+      {sendingSuccessful || sendingError ?
+        <RegistrationNotice
+          success={sendingSuccessful}
+          failed={sendingError}
+          onClose={onClose}
+        />
+      :
+        <form className="">
+          <div className='mb-2'>
+            Ответ придет в течении суток
+          </div>
+          <MyInput
+            label="Имя и Фамилия"
+            value={name}
+            onChange={setName}
+            placeholder="Введите ваше имя"
+            required={true}
+          />
+          <div className="flex flex-col ">
+            <label className="mb-2 text-sm font-medium text-white">
+              Телефон 
+              <span className='text-red-400'> *</span>
+            </label>
+            <InputMask
+              mask="+7\ 999 999 99 99" 
+              maskChar="_"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder='+7 ___ ___ __ __ '
+              className="px-4 mb-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
-          :
-            <form className="">
-              <div className='mb-2'>
-                Ответ придет в течении суток
-              </div>
-              <MyInput
-                label="Имя и Фамилия"
-                value={name}
-                onChange={setName}
-                placeholder="Введите ваше имя"
-                required={true}
-              />
-              <div className="flex flex-col ">
-                <label className="mb-2 text-sm font-medium text-white">
-                  Телефон 
-                  <span className='text-red-400'> *</span>
-                </label>
-                <InputMask
-                  mask="+7\ 999 999 99 99" 
-                  maskChar="_"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder='+7 ___ ___ __ __ '
-                  className="px-4 mb-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-                />
-              </div>
-              {/* <MyInput
-                label="Телеграмм аккаунт"
-                value={tgName}
-                onChange={setTgName}
-                placeholder="Введите ваш tg"
-              /> */}
-              <div className="mb-4">
-                <label className="inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="form-checkbox h-5 w-5 text-blue-600 transition duration-150 ease-in-out"
-                  checked={isChecked}
-                  onChange={(e) => setIsChecked(e.target.checked)}
-                />
-                  <span className="ml-2 ">
-                    Я согласен(а) на обработку моих персональных данных в соответствии с <a href="/privacy-policy" target="_blank" className="text-cyan-500"> политикой конфиденциальности</a>.
-                  </span>
-                </label>
-              </div>
-              {errorMessage && 
-                <div className="mb-4 text-red-400">
-                  <span>{errorMessage}</span>
-                </div>
-              }
-              {isLoading ?
-                <Spinner/>
-              :
-                <button onClick={(e) => sendMail(e)} className=" inline bg-transparent border border-gray-400 text-white px-6 py-3 rounded-lg hover:bg-gray-500 transition">
-                  Записаться на сессию
-                </button>
-              }
-            </form>
+          </div>
+          {/* <MyInput
+            label="Телеграмм аккаунт"
+            value={tgName}
+            onChange={setTgName}
+            placeholder="Введите ваш tg"
+          /> */}
+          <div className="mb-4">
+            <label className="inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              className="form-checkbox h-5 w-5 text-blue-600 transition duration-150 ease-in-out"
+              checked={isChecked}
+              onChange={(e) => setIsChecked(e.target.checked)}
+            />
+              <span className="ml-2 ">
+                Я согласен(а) на обработку моих персональных данных в соответствии с <a href="/privacy-policy" target="_blank" className="text-cyan-500"> политикой конфиденциальности</a>.
+              </span>
+            </label>
+          </div>
+          {errorMessage && 
+            <div className="mb-4 text-red-400">
+              <span>{errorMessage}</span>
+            </div>
           }
-        </Card>
+          {isLoading ?
+            <Spinner/>
+          :
+            <button onClick={(e) => sendMail(e)} className=" inline bg-transparent border border-gray-400 text-white px-6 py-3 rounded-lg hover:bg-gray-500 transition">
+              Записаться на сессию
+            </button>
+          }
+        </form>
+      }
+    </>
   )
 }
 

@@ -12,7 +12,6 @@ const NavBar = () => {
   const navbarRef = useRef(null);
   const { user } = useStores();
   const router = useRouter();
-  debugger
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
   const logOut = () => {
@@ -40,7 +39,7 @@ const NavBar = () => {
   return (
     <nav ref={navbarRef} className="bg-slate-900 text-white fixed top-0 w-full z-50 shadow-lg">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <div className="text-2xl font-bold cursor-pointer" onClick={() => router.push("/school")}>
+        <div className="text-2xl font-bold cursor-pointer" onClick={() => router.push("/")}>
           Твоя школа
         </div>
         <button
@@ -94,12 +93,12 @@ const NavBar = () => {
             <>
               <Link href="/profile" onClick={toggleMenu}>Мой кабинет</Link>
               {user.user.role === "ADMIN" && (
-                <Link href="/admin" onClick={toggleMenu}>Админ панель</Link>
+                <Link href="/dashboard" onClick={toggleMenu}>Админ панель</Link>
               )}
               <button onClick={() => { logOut(); toggleMenu(); }}>Выйти</button>
             </>
           ) : (
-            <Link href="/login" onClick={toggleMenu}>Войти</Link>
+            <Link href="/auth" onClick={toggleMenu}>Войти</Link>
           )}
         </nav>
       </OffcanvasMenu>

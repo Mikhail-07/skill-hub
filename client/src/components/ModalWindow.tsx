@@ -1,14 +1,16 @@
 // components/ModalWindow.tsx
 import React, { FC, ReactNode, useEffect, useRef } from 'react';
 import { IoMdClose } from 'react-icons/io';
+import Card from './Card';
 
 interface ModalWindowProps {
   children: ReactNode;
   isOpen: boolean;
   onClose: () => void;
+  header: string
 }
 
-const ModalWindow: FC<ModalWindowProps> = ({ children, isOpen, onClose }) => {
+const ModalWindow: FC<ModalWindowProps> = ({ children, isOpen, onClose, header }) => {
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -28,25 +30,27 @@ const ModalWindow: FC<ModalWindowProps> = ({ children, isOpen, onClose }) => {
 
   if (isOpen) {
     return (
-      <div
-        onClick={onClose}
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75"
-      >
+      
         <div
-          ref={modalRef}
-          onClick={handleInnerClick}
-          className="relative max-w-4xl max-h-full p-4 bg-gray-900"
+          onClick={onClose}
+          className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75"
         >
-          
-          {children}
-          <button
-            onClick={onClose}
-            className="absolute top-4 right-4 m-4 text-white text-3xl font-bold"
+          <div
+            ref={modalRef}
+            onClick={handleInnerClick}
+            className="absolute max-w-4xl max-h-screen p-4 top-0 overflow-x-auto "
           >
-            <IoMdClose size={24} />
-          </button>
+            <Card header={header}>
+              {children}
+            </Card>
+            <button
+              onClick={onClose}
+              className="absolute top-4 right-4 m-4 text-white text-3xl font-bold"
+            >
+              <IoMdClose size={24} />
+            </button>
+          </div>
         </div>
-      </div>
     );
   } else {
     return null;

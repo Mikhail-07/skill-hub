@@ -14,16 +14,33 @@ import WithWhomCard from "@/app/home/components/WithWhomCard";
 import FreeSessionCard from "@/app/home/components/FreeSessionCard";
 import FaqSection from "@/app/home/components/FaqSection";
 import AskQuestionCard from "@/app/home/components/AskQuestionCard";
+import FadingCoverWrapper from "@/components/FadingCoverWrapper";
+import ContentSection from "@/components/ContentSection";
+import ImageSection from "@/components/ImageSection";
+import MyButton from "@/components/MyButton";
 
 export default function Home() {
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
 
   return (
     <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative">
-      <ModalWindow onClose={() => setIsFormModalOpen(false)} isOpen={isFormModalOpen}>
+      <ModalWindow onClose={() => setIsFormModalOpen(false)} isOpen={isFormModalOpen} header="Заполните форму">
         <RegistrationForm isFormModalOpen={ isFormModalOpen } onClose={() => setIsFormModalOpen(false)}/>
       </ModalWindow>
-      <FadingCover setIsFormModalOpen={ setIsFormModalOpen } />
+      <FadingCoverWrapper>
+        <ImageSection 
+          imageSrc={'/hero.webp'} />
+        <ContentSection
+          title='АННА ЦАРЕВА'
+          description="Сертифицированный коуч ICF"
+          buttons={
+            <>
+              <MyButton>Записатсья на сессию</MyButton>
+              <MyButton>Мини-Курс Внутренний критик</MyButton>
+            </>
+          }
+        />
+      </FadingCoverWrapper>
       <div className="bg-slate-900 rounded-t-3xl relative z-20">
         <AboutMeCard />
         <AboutMeCardFullWidth />

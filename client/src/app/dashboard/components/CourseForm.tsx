@@ -1,126 +1,209 @@
 'use client'
 
-import React, { useState, ChangeEvent } from 'react';
+import React, { useState, ChangeEvent, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useStores } from "@/store/MobXProvider";
 import { Course } from '@/types'
 import { createCourse, fetchCourses } from '@/api/coursesAPI';
 import ModalWindow from '@/components/ModalWindow';
-import Accordion from '@/components/Accordion';
-import AccordionItem from '@/components/AccordionItem';
 import AccordionLessons from './AccordionLessons';
+import { FaUpload } from 'react-icons/fa';
+import MyInput from '@/components/MyInput';
+import MySelect from '@/components/MySelect';
+import MyFileUpload from '@/components/MyFileUpload';
+import { useCourseForm } from '@/hooks/useCourseForm';
+import { prepareFormData } from '@/utils/formDataUtils';
+import Card from '@/components/Card';
+import Header from '@/components/Header';
+import { SlTrash } from 'react-icons/sl';
 
-const CourseForm: React.FC<{ handleClose: () => void }> = observer(({ handleClose }) => {
-  const { course } = useStores();
+let uniqId = 0
+
+const CourseForm: React.FC<{ onClose: () => void, isOpen: boolean }> = observer(({ onClose, isOpen }) => {
   
-  const [courseData, setCourseData] = useState<Course>({
-    title: '',
-    subTitle: '',
-    description: '',
-    img: null,
-    price: ''
-  });
-
-  const [lessons, setLessons] = useState([
-    { id: 0, title: '', description: '', content: '', audio: null }
-  ]);
+  const { course } = useStores();
+  const { courseData, setCourseData, lessons, setLessons, isFormValid } = useCourseForm();
 
   const create = async () => {
-    const formData = new FormData();
-    Object.entries(courseData).forEach(([key, value]) => formData.append(key, value as string));
-    
-    lessons.forEach((lesson, idx) => {
-      formData.append(`lesson_${idx + 1}`, lesson.audio as File);
-      delete lesson.audio;
-    });
-
-    formData.append('lessons', JSON.stringify(lessons));
-    createCourse(formData)
-      .then(() => fetchCourses()
-      .then(data => course.setCourses(data)))
-    handleClose();
+    try {
+      const formData = prepareFormData(courseData, lessons);
+  
+      await createCourse(formData);
+      const updatedCourses = await fetchCourses();
+      course.setCourses(updatedCourses);
+  
+      onClose();
+    } catch (error) {
+      console.error('Ошибка при создании курса:', error);
+      alert('Произошла ошибка при создании курса.');
+    }
   };
 
   const addLesson = () => {
-    setLessons(prev => [...prev, { id: prev.length + 1, title: '', description: '', content: '', audio: null }]);
-  };
+    uniqId = uniqId + 1
+    setLessons([
+      ...lessons,
+      {
+        id: uniqId,
+        number: null,
+        title: '',
+        description: '',
+        content: '',
+        media: null,
+      },
+    ])
+  }
 
-  const removeLesson = (id: number) => {
-    setLessons(prev => prev.filter(lesson => lesson.id !== id));
-  };
+  const addBlock = () => {
+    uniqId = uniqId + 1
+    const newBlock = {
+      id: uniqId,
+      title: '',
+      content: '',
+    };
+    setCourseData({
+      ...courseData,
+      additionalBlocks: [...courseData.additionalBlocks, newBlock],
+    });
+  }
 
   return (
-    <ModalWindow isOpen={true} onClose={handleClose}>
-      <div className="p-4">
-        <h2 className="text-xl font-bold mb-4">Создание курса</h2>
-        
-        <div className="mb-4">
-          <label htmlFor="title" className="block text-sm font-medium text-gray-700">
-            Название курса
-          </label>
-          <input
-            id="title"
-            type="text"
+    <ModalWindow isOpen={isOpen} onClose={onClose} header="Создание курса">
+        <Card
+          header='Основное'
+          mode='transparent'
+        >
+          <MySelect
+            label="Выберите категорию"
+            value={courseData.category}
+            onChange={(value) =>
+              setCourseData({ ...courseData, category: value })
+            }
+            options={['Курс', 'Мини-курс', 'Марафон']}
+            placeholder="Выберите категорию"
+            required={true}
+          />
+          <MyInput
+            label="Название курса"
             value={courseData.title}
-            onChange={(e) => setCourseData({ ...courseData, title: e.target.value })}
+            onChange={(value) =>
+              setCourseData({ ...courseData, title: value })
+            }
             placeholder="Введите название курса"
-            className="w-full p-2 mt-2 border border-gray-300 rounded"
+            required={true}
           />
-        </div>
 
-        <div className="mb-4">
-          <label htmlFor="subTitle" className="block text-sm font-medium text-gray-700">
-            Краткое описание
-          </label>
-          <input
-            id="subTitle"
-            type="text"
+          <MyInput
+            label="Краткое описание"
+            hint='Одно-два предложения до 100 символов'
             value={courseData.subTitle}
-            onChange={(e) => setCourseData({ ...courseData, subTitle: e.target.value })}
+            onChange={(value) => setCourseData({ ...courseData, subTitle: value })}
             placeholder="Введите краткое описание"
-            className="w-full p-2 mt-2 border border-gray-300 rounded"
           />
-        </div>
 
-        <div className="mb-4">
-          <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-            Описание
-          </label>
-          <textarea
-            id="description"
-            value={courseData.description}
-            onChange={(e) => setCourseData({ ...courseData, description: e.target.value })}
-            placeholder="Введите подробное описание"
-            className="w-full p-2 mt-2 border border-gray-300 rounded"
-          />
-        </div>
-
-        <div className="mb-4">
-          <label htmlFor="price" className="block text-sm font-medium text-gray-700">
-            Цена
-          </label>
-          <input
-            id="price"
-            type="text"
+          <MyInput
+            label="Цена"
+            type="number"
             value={courseData.price}
-            onChange={(e) => setCourseData({ ...courseData, price: e.target.value })}
+            onChange={(value) => setCourseData({ ...courseData, price: parseInt(value) })}
             placeholder="Введите цену"
-            className="w-full p-2 mt-2 border border-gray-300 rounded"
           />
-        </div>
 
-        <AccordionLessons lessons={lessons} addLesson={addLesson} removeLesson={removeLesson} setLessons={setLessons}/>
+          <MyInput
+            label="Бонус купившим в первый день продаж"
+            value={courseData.firstDayBonus}
+            onChange={(value) => setCourseData({ ...courseData, firstDayBonus: value })}
+            placeholder="например: эфир «вопрос-ответ», дополнительный материал или скидка на следующий курс"
+          />
+
+          <MyFileUpload
+            id='cover_upload'
+            label="Обложка курса"
+            value={courseData.img}
+            onChange={(file: File | null) => {
+              setCourseData({ ...courseData, img: file });
+            }}
+            acceptedFormats="image/*"
+          />
+        </Card>
+          
+        <Card header="Дополнительное наполнение" mode="transparent">
+        {courseData.additionalBlocks.map((block, index) => (
+          <div key={block.id} className="mb-4 border rounded p-4 relative">
+            <div className="flex justify-between items-center mb-2">
+              <Header>Блок {index + 1}</Header>
+              <button
+                onClick={() => {
+                  setCourseData({
+                    ...courseData,
+                    additionalBlocks: courseData.additionalBlocks.filter(
+                      (b) => b.id !== block.id
+                    ),
+                  });
+                }}
+                className="text-red-500 hover:text-red-700"
+                aria-label={`Удалить блок ${index + 1}`}
+              >
+                <SlTrash size={20} />
+              </button>
+            </div>
+            <MyInput
+              label="Заголовок"
+              value={block.title}
+              onChange={(value) => {
+                const updatedBlocks = [...courseData.additionalBlocks];
+                updatedBlocks[index].title = value;
+                setCourseData({ ...courseData, additionalBlocks: updatedBlocks });
+              }}
+              placeholder="Введите заголовок блока"
+              required={true}
+            />
+            <MyInput
+              label="Содержание"
+              value={block.content}
+              onChange={(value) => {
+                const updatedBlocks = [...courseData.additionalBlocks];
+                updatedBlocks[index].content = value;
+                setCourseData({ ...courseData, additionalBlocks: updatedBlocks });
+              }}
+              placeholder="Введите содержание блока"
+              required={true}
+              type="textarea"
+            />
+          </div>
+        ))}
+
+        <button
+          onClick={() => addBlock()}
+          className="text-blue-500 mt-4"
+        >
+          Добавить блок
+        </button>
+      </Card>
+
+        <AccordionLessons
+          lessons={lessons}
+          setLessons={setLessons}
+          addLesson={() => addLesson()}
+          removeLesson={(id) =>
+            setLessons(lessons.filter((lesson) => lesson.id !== id))
+          }
+        />
 
         <div className="flex justify-end mt-4">
           <button
             onClick={create}
-            className="bg-blue-500 text-white p-2 rounded"
+            disabled={!isFormValid()}
+            className={`p-2 rounded ${
+              isFormValid()
+                ? 'bg-blue-500 hover:bg-blue-600 text-white'
+                : 'bg-gray-400 text-gray-200 cursor-not-allowed'
+            }`}
           >
             Создать курс
           </button>
         </div>
-      </div>
-    </ModalWindow>
+      </ModalWindow>
   );
 });
 

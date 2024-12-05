@@ -1,16 +1,9 @@
 import React, { FC } from 'react';
 import Accordion from '@/components/Accordion';
 import AccordionItem from '@/components/AccordionItem';
-import AccordionHeader from '@/components/AccordionHeader';
-import AccordionBody from '@/components/AccordionBody';
-
-interface Lesson {
-  id: number;
-  title: string;
-  description: string;
-  content: string;
-  audio: File | null;
-}
+import AccordionHeader from '@/app/dashboard/components/AccordionHeader';
+import AccordionBody from '@/app/dashboard/components/AccordionBody';
+import { Lesson } from '@/types';
 
 interface AccordionLessonsProps {
   lessons: Lesson[];
@@ -27,13 +20,17 @@ const AccordionLessons: FC<AccordionLessonsProps> = ({ lessons, setLessons, addL
   return (
     <Accordion>
       {lessons.map((lesson, index) => (
-        <AccordionItem key={lesson.id}>
-          <AccordionHeader
-            id={lesson.id}
-            lessonNumber={index + 1}
-            onRemove={removeLesson}
-            isRemovable={lessons.length > 1}
-          />
+        <AccordionItem 
+          key={lesson.id}
+          title={
+            <AccordionHeader
+              id={lesson.id}
+              lessonNumber={index + 1}
+              onRemove={removeLesson}
+              isRemovable={lessons.length > 1}
+            />
+          }
+        >
           <AccordionBody lesson={lesson} onChange={onChangeLesson} />
         </AccordionItem>
       ))}

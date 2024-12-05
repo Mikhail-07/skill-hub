@@ -2,46 +2,105 @@ const uuid = require('uuid')
 const path = require('path')
 const fs = require('fs');
 const { unlink } = require('node:fs/promises');
-const { Course, Lesson, User, OrderCourse, Waitlist } = require('../models/models')
+const { Course, Lesson, User, OrderCourse, Waitlist, CourseBlock } = require('../models/models')
 const ApiError = require('../error/ApiError');
 const { Op } = require('sequelize');
+const { Console } = require('console');
 
-const courseFilling = async (title, subTitle, description, price, lessons, img, files) => {
-  const fileName = uuid.v4() + '.jpg';
-  img.mv(path.resolve(__dirname, '..', 'static', fileName));
-  const course = await Course.create({title, subTitle, description, price, img: fileName});
-  JSON.parse(lessons).forEach(async lesson => {
-    const {number, title, description, content} = lesson
-    
-    let fileName = null;
-    if (files[`lesson_${lesson.number}`]){
-      const audio = files[`lesson_${lesson.number}`]
-      console.log(audio)
-      fileName = uuid.v4() + '.mp3';
-      audio.mv(path.resolve(__dirname, '..', 'static', fileName));
-    }
-    
-    await Lesson.create({number, title, description, content, audio: fileName, courseId: course.id})
+const courseFilling = async (title, subTitle, price, category, firstDayBonus, additionalBlocks, lessons, img, files, mediaFiles) => {
+  // Сохранение обложки курса
+  const imgFileName = uuid.v4() + '.jpg';
+  img.mv(path.resolve(__dirname, '..', 'static', imgFileName));
+
+  console.log('lessons:', lessons);
+  console.log('course data:', { title, subTitle, price, category, firstDayBonus });
+
+  // Создание курса
+  const course = await Course.create({
+    title,
+    subTitle,
+    price,
+    category,
+    firstDayBonus,
+    img: imgFileName
   });
 
-  return course
-}
+  console.log('COURSE SAVED!');
+  
+  // Разбор и сохранение уроков
+  const parsedLessons = JSON.parse(lessons);
+  console.log('LESSONS PARSED!');
+  console.log('MEDIA:', mediaFiles);
+
+  const parsedMediaFiles = mediaFiles.map(file => JSON.parse(file));
+  console.log('Parsed Media Files:', parsedMediaFiles);
+
+  for (let lesson of parsedLessons) {
+    const { number, title, description, content } = lesson;
+    let fileName = null;
+
+    // Найдём соответствующий медиафайл для урока по типу
+    const media = parsedMediaFiles.find((file) => file.number === number);
+    if (media) {
+      const { type } = media;
+      const fileKey = `lesson_${number}`;
+
+      if (files[fileKey]) {
+        const mediaFile = files[fileKey];
+        fileName = uuid.v4() + (type === 'audio' ? '.mp3' : '.mp4');
+        mediaFile.mv(path.resolve(__dirname, '..', 'static', fileName));
+      }
+    }
+
+    // Создаём урок с привязкой к курсу
+    await Lesson.create({
+      number,
+      title,
+      description,
+      content,
+      audio: fileName,
+      courseId: course.id
+    });
+  }
+
+  // Разбор и сохранение дополнительных блоков
+  console.log('ADDITIONAL BLOCKS: ', additionalBlocks)
+  const parsedAdditionalBlocks = JSON.parse(additionalBlocks);
+  console.log('Parsed Additional Blocks:', parsedAdditionalBlocks);
+
+  for (let block of parsedAdditionalBlocks) {
+    const { title, content } = block;
+
+    await CourseBlock.create({
+      title,
+      content,
+      courseId: course.id
+    });
+  }
+
+  console.log('ADDITIONAL BLOCKS SAVED!');
+  return course;
+};
 
 class CourseController{
-  async create(req, res, next){
+  async create(req, res, next) {
     try {
-      const {title, subTitle, description, price, lessons} = req.body;
-      const {img} = req.files;
-      const course = courseFilling(title, subTitle, description, price, lessons, img, req.files)
-      console.log('[[[[[[[[[[[[[xxxxx')
-      console.log(typeof lessons)
-      console.log('[[[[[[[[[[[[[xxxx')
-      return res.json(course)
-    } catch(e) {
-      next(new Error('Something broke again! '))
-      next(ApiError.badRequest(e.message))
-    } 
+      const { title, subTitle, price, category, firstDayBonus, lessons, additionalBlocks, mediaFiles } = req.body;
+      const { img } = req.files;
+  
+      console.log("BODY: ", req.body);
+      console.log("FILES: ", req.files);
+  
+      // Создаем курс с новыми полями
+      const course = await courseFilling(title, subTitle, parseInt(price), category, firstDayBonus, additionalBlocks, lessons, img, req.files, mediaFiles);
+  
+      return res.json(course);
+    } catch (e) {
+      next(new Error('Something broke again! '));
+      next(ApiError.badRequest(e.message));
+    }
   }
+  
 
   async edit(req, res, next){
     try {
@@ -136,15 +195,45 @@ class CourseController{
     return res.json(courses)
   }
 
-  async getOne(req, res){
-    const {id} = req.params;
-    const course = await Course.findOne({
-      where: {id},
-      include: [{model: Lesson, attributes: ['id', 'description', 'title', 'number']}]
-    })
+  async getOne(req, res) {
+    const { id } = req.params;
 
-    return res.json(course)
-  }
+    try {
+        const course = await Course.findOne({
+            where: { id },
+            include: [
+                {
+                    model: Lesson,
+                    attributes: ['id', 'description', 'title', 'number'],
+                },
+                {
+                    model: CourseBlock,
+                    attributes: ['id', 'title', 'content'],
+                    as: 'additionalBlocks', // Переименовываем в additionalBlocks
+                },
+            ],
+        });
+
+        if (course && course.lessons) {
+          course.lessons = course.lessons.map(lesson => {
+            if (lesson.description) {
+              lesson.description = lesson.description.split('\n').map(item => item.trim()).filter(item => item !== '');
+            }
+            return lesson;
+          });
+        }
+
+        if (!course) {
+            return res.status(404).json({ message: 'Курс не найден' });
+        }
+
+        return res.json(course); // Теперь будет include с правильным именем additionalBlocks
+    } catch (error) {
+        console.error('Error fetching course:', error);
+        return res.status(500).json({ message: 'Ошибка сервера' });
+    }
+}
+
 
   async getCourseLessons(req, res, next){
     const {id} = req.params;

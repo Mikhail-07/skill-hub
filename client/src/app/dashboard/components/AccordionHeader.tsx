@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+import { SlTrash } from 'react-icons/sl';
 
 interface AccordionHeaderProps {
   id: number;
@@ -14,11 +15,11 @@ const AccordionHeader: FC<AccordionHeaderProps> = ({ id, lessonNumber, onRemove,
   };
 
   return (
-    <div className="flex justify-between items-center w-full p-2 bg-gray-100 border-b">
+    <div className="flex justify-between items-center w-full p-2">
       <span>Урок {lessonNumber}</span>
       {isRemovable && (
         <button onClick={handleDelete} className="text-red-500">
-          Удалить урок
+          <SlTrash/>
         </button>
       )}
     </div>

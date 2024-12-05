@@ -1,8 +1,15 @@
 import React from 'react';
-import ModalWindow from './ModalWindow';
 import { observer } from 'mobx-react-lite';
+import ModalWindow from '@/components/ModalWindow';
 
-const SortableTable = observer(({ name, arr, headerConfig, children }) => {
+interface SortableTableProps {
+  name: string;
+  arr: Array<Record<string, any>>;
+  headerConfig: Array<{ id: string; title: string; template?: (value: any) => React.ReactNode }>;
+  children?: React.ReactNode;
+}
+
+const SortableTable: React.FC<SortableTableProps> = observer(({ name, arr, headerConfig, children }) => {
   if (arr.length === 0) return null;
 
   const cells = headerConfig.map(({ id, template }) => ({
@@ -11,52 +18,48 @@ const SortableTable = observer(({ name, arr, headerConfig, children }) => {
   }));
 
   return (
-    <div className="bg-white shadow rounded-lg p-4 mb-4 w-full h-full">
-      <h4 className="text-lg font-semibold mb-2">{name}</h4>
-      <div className="overflow-auto">
-        <table className="min-w-full bg-white border border-gray-200">
+    <div className="mb-8 p-6 rounded-lg shadow-lg bg-white dark:bg-gray-900 max-w-full">
+      <h4 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">{name}</h4>
+      <div className="overflow-x-auto">
+        <table className="min-w-full text-left border-collapse">
           <thead>
-            <tr className="border-b bg-gray-100">
-              <th className="p-2 text-left">
-                <span>#</span>
-              </th>
+            <tr className="bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 text-white">
+              <th className="px-6 py-3 text-sm font-medium tracking-wide uppercase">#</th>
               {headerConfig.map((item) => (
-                <th key={item.id} className="p-2 text-left">
-                  <span>{item.title}</span>
+                <th
+                  key={item.id}
+                  className="px-6 py-3 text-sm font-medium tracking-wide uppercase"
+                >
+                  {item.title}
                 </th>
               ))}
             </tr>
           </thead>
-
-          <tbody>
-            {arr.map((item, idx) => (
+          <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+            {arr.map((item, idx) =>
               children ? (
-                <ModalWindow key={item.id} id={item.id}>
-                  <tr className="border-b">
-                    <td className="p-2">
-                      <span>{idx + 1}</span>
-                    </td>
+                <ModalWindow key={item.id} isOpen={false} onClose={() => {}} header={`Details for ${item.id}`}>
+                  <tr className="hover:bg-gray-50 dark:hover:bg-gray-800">
+                    <td className="px-6 py-4">{idx + 1}</td>
                     {cells.map(({ id, template }) => (
-                      <td key={id} className="p-2">
-                        <span>{template ? template(item[id]) : item[id]}</span>
+                      <td key={id} className="px-6 py-4">
+                        {template ? template(item[id]) : item[id]}
                       </td>
                     ))}
                   </tr>
                   {children}
                 </ModalWindow>
               ) : (
-                <tr key={item.id} className="border-b">
-                  <td className="p-2">
-                    <span>{idx + 1}</span>
-                  </td>
+                <tr key={item.id} className="hover:bg-gray-50 dark:hover:bg-gray-800">
+                  <td className="px-6 py-4">{idx + 1}</td>
                   {cells.map(({ id, template }) => (
-                    <td key={id} className="p-2">
-                      <span>{template ? template(item[id]) : item[id]}</span>
+                    <td key={id} className="px-6 py-4">
+                      {template ? template(item[id]) : item[id]}
                     </td>
                   ))}
                 </tr>
               )
-            ))}
+            )}
           </tbody>
         </table>
       </div>

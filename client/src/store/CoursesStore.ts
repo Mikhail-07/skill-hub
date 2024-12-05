@@ -11,6 +11,7 @@ export default class CourseStore{
 
   setCourses(courses){
     this._courses = courses
+    console.log("COURSES STORED: ", courses)
   }
 
   setCourse(id){

@@ -23,10 +23,12 @@ const OrderCourse = sequelize.define('order-course', {
 const Course = sequelize.define('course', {
   id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
   title: {type: DataTypes.STRING, unique: true, allowNull: false},
-  subTitle: {type: DataTypes.STRING, unique: true, allowNull: false},
-  description: {type: DataTypes.TEXT, unique: true, allowNull: false},
+  subTitle: {type: DataTypes.STRING, unique: true},
+  description: {type: DataTypes.TEXT, unique: true},
   img: {type: DataTypes.STRING, unique: true, allowNull: false},
-  price: {type: DataTypes.INTEGER, allowNull: false}
+  price: {type: DataTypes.INTEGER},
+  category: {type: DataTypes.STRING},
+  firstDayBonus: {type: DataTypes.STRING},
 })
 
 const Lesson = sequelize.define('lesson', {
@@ -35,7 +37,13 @@ const Lesson = sequelize.define('lesson', {
   title: {type: DataTypes.STRING, allowNull: false},
   description: {type: DataTypes.TEXT, allowNull: false},
   content: {type: DataTypes.TEXT, allowNull: false},
-  audio: {type: DataTypes.STRING, unique: true},
+  media: {type: DataTypes.STRING, unique: true},
+})
+
+const CourseBlock = sequelize.define('course_block', {
+  id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+  title: {type: DataTypes.STRING},
+  content: {type: DataTypes.TEXT, allowNull: false},
 })
 
 const AvailableLesson = sequelize.define('available_lesson', {
@@ -85,6 +93,9 @@ OrderCourse.belongsTo(Course)
 Course.hasMany(Lesson)
 Lesson.belongsTo(Course)
 
+Course.hasMany(CourseBlock, { as: 'additionalBlocks' });
+CourseBlock.belongsTo(Course)
+
 Course.hasMany(UserGroup)
 UserGroup.belongsTo(Course)
 
@@ -117,5 +128,5 @@ Waitlist.belongsTo(Course);
 
 
 module.exports = {
-  User, Order, OrderCourse, Course, UserGroup, Group, AvailableLesson, Lesson, Achieve, Role, Media, Waitlist
+  User, Order, OrderCourse, Course, UserGroup, Group, AvailableLesson, Lesson, Achieve, Role, Media, Waitlist, CourseBlock
 }

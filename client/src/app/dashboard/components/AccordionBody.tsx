@@ -1,57 +1,55 @@
+import MyFileUpload from '@/components/MyFileUpload';
+import MyInput from '@/components/MyInput';
+import { Lesson } from '@/types';
 import React, { FC } from 'react';
-
-interface Lesson {
-  id: number;
-  title: string;
-  description: string;
-  content: string;
-  audio: File | null;
-}
 
 interface AccordionBodyProps {
   lesson: Lesson;
   onChange: (id: number, field: keyof Lesson, value: any) => void;
 }
 
-const AccordionBody: FC<AccordionBodyProps> = ({ lesson, onChange }) => (
-  <div className="p-4">
-    <div className="mb-4">
-      <label className="block text-sm font-medium text-gray-700">Название урока</label>
-      <input
-        type="text"
+const AccordionBody: FC<AccordionBodyProps> = ({ lesson, onChange }) => {
+  const handleFileUpload = (file: File | null) => {
+    onChange(lesson.id, 'media', file);
+  };
+
+  return (
+    <>
+      <MyInput
+        label="Название урока"
         value={lesson.title}
-        onChange={(e) => onChange(lesson.id, 'title', e.target.value)}
-        className="w-full p-2 mt-2 border border-gray-300 rounded"
+        onChange={(value) => onChange(lesson.id, 'title', value)}
+        placeholder="Введите название урока"
+        required
       />
-    </div>
 
-    <div className="mb-4">
-      <label className="block text-sm font-medium text-gray-700">Описание урока</label>
-      <textarea
+      <MyInput
+        label="Описание урока"
         value={lesson.description}
-        onChange={(e) => onChange(lesson.id, 'description', e.target.value)}
-        className="w-full p-2 mt-2 border border-gray-300 rounded"
+        onChange={(value) => onChange(lesson.id, 'description', value)}
+        placeholder="Введите краткое описание урока"
+        required
+        type="textarea"
       />
-    </div>
 
-    <div className="mb-4">
-      <label className="block text-sm font-medium text-gray-700">Содержание урока</label>
-      <textarea
+      <MyInput
+        label="Содержание урока"
         value={lesson.content}
-        onChange={(e) => onChange(lesson.id, 'content', e.target.value)}
-        className="w-full p-2 mt-2 border border-gray-300 rounded"
+        onChange={(value) => onChange(lesson.id, 'content', value)}
+        placeholder="Введите основное содержание урока"
+        type="textarea"
       />
-    </div>
 
-    <div className="mb-4">
-      <label className="block text-sm font-medium text-gray-700">Аудио для урока</label>
-      <input
-        type="file"
-        onChange={(e) => onChange(lesson.id, 'audio', e.target.files?.[0] || null)}
-        className="w-full p-2 mt-2 border border-gray-300 rounded"
+      <MyFileUpload
+        id={`lesson_${lesson.id}`}
+        label="Медиафайл для урока (аудио или видео)"
+        value={lesson.media}
+        onChange={handleFileUpload}
+        acceptedFormats="audio/*,video/*"
+        recommendedFormat="MP3, WAV, MP4, AVI"
       />
-    </div>
-  </div>
-);
+    </>
+  );
+};
 
 export default AccordionBody;

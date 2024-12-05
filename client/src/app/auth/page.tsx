@@ -23,7 +23,6 @@ const AuthPage = () => {
   };
 
   const handleSubmit = async () => {
-    debugger
     try {
       let data;
       if (isLogin) {
