@@ -53,7 +53,7 @@ const CoursePage = ({ params }: CoursePageProps) => {
 
       <div className="flex-shrink-0 bg-slate-900 rounded-t-3xl relative z-20">
         {course.additionalBlocks.map(({title, content}) => 
-        <Card header={title} mode='light'>
+        <Card header={title} mode='light' key={title}>
           <p className="mb-8 text-lg font-bold">
             {content}
           </p>
@@ -63,7 +63,7 @@ const CoursePage = ({ params }: CoursePageProps) => {
         <div className="mt-10">
           <Header className="text-2xl mb-4">Что включает курс:</Header>
           {course.lessons.map(({number, title, description}) =>
-            <Card header={`${number}. ${title}`}>
+            <Card key={number} header={`${number}. ${title}`}>
               {/* <p>
                 {description}
               </p> */}
