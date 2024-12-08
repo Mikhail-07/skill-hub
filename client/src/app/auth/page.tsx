@@ -24,7 +24,7 @@ const AuthPage = () => {
 
   const handleSubmit = async () => {
     try {
-      let data;
+      let data
       if (isLogin) {
         data = await login(formValues);
       } else {
@@ -33,7 +33,7 @@ const AuthPage = () => {
       user.setUser(data);
       user.setAuth(true);
       router.push('/home');
-    } catch (error) {
+    } catch (error: any) {
       alert(error.response?.data?.message || 'Ошибка');
     }
   };
@@ -47,7 +47,7 @@ const AuthPage = () => {
             value={formValues.email}
             onChange={(value) => handleChange('email', value)}
             placeholder="Введите email"
-            type="email"
+            // type="email"
             required
           />
           <MyInput
@@ -55,7 +55,7 @@ const AuthPage = () => {
             value={formValues.password}
             onChange={(value) => handleChange('password', value)}
             placeholder="Введите пароль"
-            type="password"
+            // type="password"
             required
           />
           {!isLogin && (

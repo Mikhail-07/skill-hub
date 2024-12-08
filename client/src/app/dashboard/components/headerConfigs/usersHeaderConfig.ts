@@ -16,14 +16,14 @@ const usersHeaderConfig = [
     title: 'Поток',
     sortable: true,
     sortType: 'string',
-    template: (group) => group ? group : 'Нет'
+    template: (group: any) => group ? group : 'Нет'
   },
   {
     id: 'date',
     title: 'Куплен',
     sortable: true,
     sortType: 'number',
-    template: (timestamp) => {
+    template: (timestamp: string) => {
       const date = new Date(timestamp)
       return ("0" + date.getDate()).slice(-2) + "." + ("0" + (date.getMonth() + 1)).slice(-2) + "." + date.getFullYear()
     }

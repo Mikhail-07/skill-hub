@@ -7,7 +7,7 @@ interface ModalWindowProps {
   children: ReactNode;
   isOpen: boolean;
   onClose: () => void;
-  header: string
+  header?: string
 }
 
 const ModalWindow: FC<ModalWindowProps> = ({ children, isOpen, onClose, header }) => {

@@ -1,10 +1,12 @@
 "use client"
 
+import { SetModal } from '@/types'
 import Link from 'next/link'
-import React, { useEffect, useState } from 'react'
+import Image from 'next/image';
+import React, { FC, useEffect, useState } from 'react'
 import { FiChevronDown } from 'react-icons/fi'
 
-const FadingCover = ({ setIsFormModalOpen }) => {
+const FadingCover: FC<SetModal> = ({ setIsFormModalOpen }) => {
 
   const [scrollY, setScrollY] = useState(0);
 
@@ -28,11 +30,14 @@ const FadingCover = ({ setIsFormModalOpen }) => {
       <div className="fixed z-10 max-w-7xl mx-auto h-full inset-x-0 px-4 " style={{ transform: `scale(${shrinkFactor})`, opacity: opacityFactor }}>
         <div className="flex flex-col h-full md:flex-row md:items-center justify-between rounded-3xl mb-6 relative">
           <div className="mb-2 md:mb-0 relative md:w-1/2 w-full h-full md:order-2 overflow-hidden">
-            <img
-              src="/hero.webp"
-              alt="Vertical Photo"
-              className="rounded-3xl object-cover w-full h-full"
-            />
+            <div className="relative w-full h-full">
+              <Image
+                src="/hero.webp"
+                alt="Vertical Photo"
+                layout="fill"
+                className="rounded-3xl object-cover"
+              />
+            </div>
             <div className="absolute inset-0 bg-gradient-to-t from-slate-900 to-transparent"></div>
           </div>
           <div className="w-full flex flex-col justify-center md:w-1/2 space-y-4 md:mb-0 md:order-1 md:static absolute h-full  p-4">

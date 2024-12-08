@@ -1,16 +1,18 @@
 import Link from 'next/link'
 import React from 'react'
+import Image from 'next/image';
 import { RiLink } from 'react-icons/ri'
 
 const AboutMeCardFullWidth = () => {
   return (
     <div className="flex  md:gap-10 md:flex-nowrap items-center flex-wrap">
       <div className="relative w-screen md:w-1/2 md:mx-0 h-96 -mx-4  mb-8 md:order-2">
-        <img
-          src='/hero2.jpeg'
-          alt="Vertical Photo 2"
-          className="absolute inset-0 w-full h-full object-cover"
-        />
+      <Image
+        src="/hero2.jpeg"
+        alt="Vertical Photo 2"
+        layout="fill" // Позволяет изображению заполнять весь контейнер
+        className="absolute inset-0 object-cover rounded" // Сохранение стилей
+      />
       </div>
       <div className="mb-8 md:w-1/2">
         <p className="mb-6">

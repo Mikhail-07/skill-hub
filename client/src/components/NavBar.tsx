@@ -9,13 +9,13 @@ import { observer } from "mobx-react-lite";
 
 const NavBar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const navbarRef = useRef(null);
+  const navbarRef = useRef<HTMLDivElement>(null);
   const { user } = useStores();
   const router = useRouter();
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
   const logOut = () => {
-    user.setUser({});
+    user.setUser(null);
     user.setAuth(false);
     localStorage.removeItem("token");
   };
@@ -69,7 +69,7 @@ const NavBar = () => {
               <Link href="/profile" className="block mt-4 md:inline-block md:mt-0 mr-6">
                 Мой кабинет
               </Link>
-              {user.user.role === "ADMIN" && (
+              {user.user && user.user.role === "ADMIN" && (
                 <Link href="/dashboard" className="block mt-4 md:inline-block md:mt-0 mr-6">
                   Админ панель
                 </Link>
@@ -89,7 +89,7 @@ const NavBar = () => {
         <nav className="flex flex-col space-y-4">
           <Link href="/courses" onClick={toggleMenu}>Курсы</Link>
           <Link href="/coaching" onClick={toggleMenu}>Коучинг</Link>
-          {user.isAuth ? (
+          {user.user && user.isAuth ? (
             <>
               <Link href="/profile" onClick={toggleMenu}>Мой кабинет</Link>
               {user.user.role === "ADMIN" && (

@@ -1,8 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { FC, ReactNode, useEffect, useState } from "react";
 
-const OffcanvasMenu = ({ isOpen, onClose, children }) => {
+interface OffcanvasMenuProps {
+  isOpen: boolean,
+  onClose: () => void,
+  children: ReactNode
+}
+
+const OffcanvasMenu: FC <OffcanvasMenuProps> = ({ isOpen, onClose, children }) => {
   const [visible, setVisible] = useState(isOpen);
 
   useEffect(() => {

@@ -1,7 +1,11 @@
-import React from 'react'
+import React, { FC } from 'react'
 import Card from '../../../components/Card'
 
-const FreeSessionCard = ({ setIsFormModalOpen }) => {
+interface FreeSessionCardProps {
+  setIsFormModalOpen: (arg0: boolean) => void
+}
+
+const FreeSessionCard: FC<FreeSessionCardProps> = ({ setIsFormModalOpen }) => {
   return (
     <Card header="Бесплатная установочная сессия">
       <div>

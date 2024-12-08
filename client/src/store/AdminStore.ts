@@ -1,32 +1,34 @@
 import { makeAutoObservable } from "mobx";
 
 export default class AdminStore{
-  constructor(){
-    this._users = []
-    this._sales = []
-    this._groups = [] 
-    this._group = {}
-    this._filteredUsers = []
-    makeAutoObservable(this)
+  private _users: any[] = [];
+  private _sales: any[] = [];
+  private _groups: any[] = [];
+  private _group: any = {};
+  private _filteredUsers: any[] = [];
+  private _show: boolean = false;
+
+  constructor() {
+    makeAutoObservable(this);
   }
 
-  setUsers(data){
+  setUsers(data: any[]){
     this._users = data
   }
 
-  setGroups(data){
+  setGroups(data: any[]){
     this._groups = data
   }
 
-  setGroup(id){
+  setGroup(id: number){
     this._group = this._groups.find(group => group.id === id)
   }
 
-  setFilteredUsers(id){
+  setFilteredUsers(id: number){
     this._filteredUsers = this._users.filter(user => user.courseId === id && !user.groupId)
   }
 
-  setShow(bool){
+  setShow(bool: boolean){
     this._show = bool
   }
 

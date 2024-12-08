@@ -1,11 +1,12 @@
 import { withWhom } from '@/app/home/db'
-import React from 'react'
+import React, { FC } from 'react'
 import { MdDone } from 'react-icons/md'
 import Card from '../../../components/Card'
 import Header from '../../../components/Header'
 import SimpleCell from '../../../components/SimpleCell'
+import { SetModal } from '@/types'
 
-const WithWhomCard = ({ setIsFormModalOpen }) => {
+const WithWhomCard: FC <SetModal> = ({ setIsFormModalOpen }) => {
   return (
     <Card header="С чем я работаю">
       {withWhom.map(({header, description}) => 

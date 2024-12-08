@@ -1,10 +1,11 @@
 import { priceLight } from '@/app/home/db'
-import React from 'react'
+import React, { FC } from 'react'
 import Card from '../../../components/Card'
 import Header from '../../../components/Header'
 import SimpleCell from '../../../components/SimpleCell'
+import { SetModal } from '@/types'
 
-const PriceSection = ({setIsFormModalOpen}) => {
+const PriceSection: FC<SetModal> = ({setIsFormModalOpen}) => {
   return (
     <div>
       <h1 className="text-4xl mb-3">Цены</h1>

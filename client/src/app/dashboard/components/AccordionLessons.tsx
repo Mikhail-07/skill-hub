@@ -3,17 +3,17 @@ import Accordion from '@/components/Accordion';
 import AccordionItem from '@/components/AccordionItem';
 import AccordionHeader from '@/app/dashboard/components/AccordionHeader';
 import AccordionBody from '@/app/dashboard/components/AccordionBody';
-import { Lesson } from '@/types';
+import { Lesson, LessonData } from '@/types';
 
 interface AccordionLessonsProps {
-  lessons: Lesson[];
-  setLessons: (lessons: Lesson[]) => void;
+  lessons: LessonData[];
+  setLessons: (lessons: LessonData[]) => void;
   addLesson: () => void;
   removeLesson: (id: number) => void;
 }
 
 const AccordionLessons: FC<AccordionLessonsProps> = ({ lessons, setLessons, addLesson, removeLesson }) => {
-  const onChangeLesson = (id: number, field: keyof Lesson, value: any) => {
+  const onChangeLesson = (id: number, field: keyof LessonData, value: any) => {
     setLessons(lessons.map(lesson => lesson.id === id ? { ...lesson, [field]: value } : lesson));
   };
 

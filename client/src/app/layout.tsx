@@ -8,6 +8,7 @@ import MobXProvider from "@/store/MobXProvider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://tsarevaschool.ru"), // Указание базового URL
   title: "Анна Царева - Профессиональный Коуч | Личный Рост и Развитие",
   description: "Опытный коуч Анна Царева помогает достигать личных и профессиональных целей. Индивидуальные сессии и программы развития для максимальных результатов.",
   keywords: "коучинг, личностный рост, развитие карьеры, профессиональный коуч, Анна Царева",
@@ -17,7 +18,7 @@ export const metadata: Metadata = {
     url: "https://tsarevaschool.ru/",
     images: [
       {
-        url: "/avatar.jpg",
+        url: "/avatar.jpg",  // Локальный путь, который теперь будет правильно разрешен
         width: 180,
         height: 180,
         alt: "Анна Царева - Профессиональный Коуч",

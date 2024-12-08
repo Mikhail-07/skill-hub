@@ -66,9 +66,10 @@ const CoursePage = ({ params }: CoursePageProps) => {
             <Card key={number} header={`${number}. ${title}`}>
               {/* <p>
                 {description}
-              </p> */}
+              </p> */
+              }
               
-                {description.map((item, index) =>
+                {description.map((item: string, index: number) =>
                   <SimpleCell
                   key={index}
                   before={<MdDone size={24} style={{ color: 'rgb(156, 163, 175)' }} />}

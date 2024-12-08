@@ -1,37 +1,38 @@
-import {makeAutoObservable} from 'mobx'
+import { Course, Lesson } from '@/types';
+import { makeAutoObservable } from 'mobx';
 
-export default class CourseStore{
-  constructor(){
-    this._courses = []; 
-    this._course = {};
-    this._lessons = []
+export default class CourseStore {
+  private _courses: Course[] = [];
+  private _course: Course | null = null;
+  private _lessons: Lesson[] = [];
 
+  constructor() {
     makeAutoObservable(this);
   }
 
-  setCourses(courses){
-    this._courses = courses
-    console.log("COURSES STORED: ", courses)
+  setCourses(courses: Course[]) {
+    this._courses = courses;
+    console.log("COURSES STORED: ", courses);
   }
 
-  setCourse(id){
-    const filteredCourse = this._courses.find(course => course.id === id)
-    filteredCourse ? this._course = filteredCourse : this._course = []
+  setCourse(id: number) {
+    const filteredCourse = this._courses.find(course => course.id === id);
+    this._course = filteredCourse || null;
   }
 
-  setLessons(lessons){
-    this._lessons = lessons
+  setLessons(lessons: Lesson[]) {
+    this._lessons = lessons;
   }
 
-  get courses(){
-    return this._courses
+  get courses(): Course[] {
+    return this._courses;
   }
 
-  get course(){
-    return this._course
+  get course(): Course | null {
+    return this._course;
   }
 
-  get lessons(){
-    return this._lessons
+  get lessons(): Lesson[] {
+    return this._lessons;
   }
 }

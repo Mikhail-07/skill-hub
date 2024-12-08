@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import { FaArrowTrendUp } from 'react-icons/fa6'
 import { HiOutlineAcademicCap } from 'react-icons/hi2'
 import { IoEarth } from 'react-icons/io5'
+import Image from 'next/image';
 import { LiaHandsHelpingSolid } from 'react-icons/lia'
 import { TbFileCertificate } from 'react-icons/tb'
 import Card from '../../../components/Card'
@@ -27,25 +28,36 @@ const AboutMeCard = () => {
             className="relative cursor-pointer w-24 h-full"
             onClick={() => setIsCertifyModalOpen(true)}
           >
-            <img
-              src='/certify.webp'
-              alt="Thumbnail"
-              className="w-full h-auto object-cover rounded"
-            />
+          <Image
+            src="/certify.webp"
+            alt="Thumbnail"
+            layout="responsive"
+            width={16}
+            height={9}
+            className="rounded"
+            objectFit="cover"
+          />
+
           </div>
         </div>
         <ModalWindow 
-          onClose={() => setIsCertifyModalOpen(false)}
-          isOpen={isCertifyModalOpen}
-        >
-          <div className="max-w-screen max-h-screen overflow-auto">
-            <img
-              src='/certify.webp'
-              alt="Full-size image"
-              className="w-auto h-auto object-contain rounded"
-            />
+        onClose={() => setIsCertifyModalOpen(false)}
+        isOpen={isCertifyModalOpen}
+      >
+        <div className="max-w-screen max-h-screen overflow-auto">
+          <div className="relative w-full h-full">
+          <Image
+            src="/certify.webp"
+            alt="Full-size image"
+            layout="responsive"
+            width={16} 
+            height={9}
+            className="rounded"
+            objectFit="contain"
+          />
           </div>
-        </ModalWindow>
+        </div>
+      </ModalWindow>
       </SimpleCell>
       <SimpleCell
         before={<TbFileCertificate size={24} style={{ color: 'rgb(156, 163, 175)' }} />}

@@ -4,7 +4,7 @@ import { FaUpload } from 'react-icons/fa';
 interface MyFileUploadProps {
   id: string;
   label: string;
-  value: File | null;
+  value?: File | null;
   onChange: (file: File | null) => void;
   acceptedFormats: string;
   recommendedFormat?: string;

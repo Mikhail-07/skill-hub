@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Course, Lesson } from '@/types';
+import { CourseData, Lesson, LessonData } from '@/types';
 
 export const useCourseForm = () => {
-  const [courseData, setCourseData] = useState<Course>({
+  const [courseData, setCourseData] = useState<CourseData>({
     title: '',
     subTitle: '',
     description: '',
@@ -17,7 +17,7 @@ export const useCourseForm = () => {
   });
   
 
-  const [lessons, setLessons] = useState<Lesson[]>([
+  const [lessons, setLessons] = useState<LessonData[]>([
     { id: 0, number: null, title: '', description: '', content: '', media: null },
   ]);
 

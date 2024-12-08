@@ -1,11 +1,11 @@
 import MyFileUpload from '@/components/MyFileUpload';
 import MyInput from '@/components/MyInput';
-import { Lesson } from '@/types';
+import { Lesson, LessonData } from '@/types';
 import React, { FC } from 'react';
 
 interface AccordionBodyProps {
-  lesson: Lesson;
-  onChange: (id: number, field: keyof Lesson, value: any) => void;
+  lesson: LessonData;
+  onChange: (id: number, field: keyof LessonData, value: any) => void;
 }
 
 const AccordionBody: FC<AccordionBodyProps> = ({ lesson, onChange }) => {
@@ -23,7 +23,9 @@ const AccordionBody: FC<AccordionBodyProps> = ({ lesson, onChange }) => {
         required
       />
 
-      <MyInput
+      {/* ПОПРАВИТЬ ТИПЫ НИЖЕ!!! */}
+      {typeof lesson.description === 'string' &&
+        <MyInput
         label="Описание урока"
         value={lesson.description}
         onChange={(value) => onChange(lesson.id, 'description', value)}
@@ -31,6 +33,8 @@ const AccordionBody: FC<AccordionBodyProps> = ({ lesson, onChange }) => {
         required
         type="textarea"
       />
+      }
+      
 
       <MyInput
         label="Содержание урока"

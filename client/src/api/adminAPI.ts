@@ -5,12 +5,12 @@ export const fetchUsers = async () => {
   return data
 }
 
-export const createGroup = async (group) => {
+export const createGroup = async (group: any) => {
   const {data} = await $authHost.post('api/admin/group', group)
   return data
 }
 
-export const editGroup = async (group) => {
+export const editGroup = async (group: any) => {
   const {data} = await $authHost.post('api/admin/group/edit', group)
   return data
 }
@@ -20,7 +20,7 @@ export const fetchGroups = async () => {
   return data
 }
 
-export const createAchive = async (achieve) =>{
+export const createAchive = async (achieve: any) =>{
   const {data} = await $authHost.post('api/admin/achieve', achieve)
   return data
 }

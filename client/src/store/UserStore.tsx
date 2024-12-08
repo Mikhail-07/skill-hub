@@ -1,55 +1,60 @@
-import {makeAutoObservable} from 'mobx'
+import { Course, Lesson, RegistrationParams, User } from '@/types';
+import { makeAutoObservable } from 'mobx';
 
-export default class UserStore{
-  constructor(){
-    this._isAuth = false;
-    this._user = {};
-    this._course = [];
-    this._courses = [];
-    this._lessons = []
+
+
+export default class UserStore {
+  private _isAuth: boolean = false;
+  private _user: User | null = null;
+  private _courses: Course[] = [];
+  private _course: Course | null = null;
+  private _lessons: Lesson[] = [];
+
+  constructor() {
     makeAutoObservable(this);
   }
 
-  setAuth(bool){
-    this._isAuth = bool
+  setAuth(bool: boolean) {
+    this._isAuth = bool;
   }
 
-  setUser(user){
-    this._user = user
+  setUser(user: User | null) {
+    this._user = user;
   }
 
-  setCourses(courses){
-    this._courses = courses
+  setCourses(courses: Course[]) {
+    this._courses = courses;
   }
 
-  setCourse(title){
-    this._course = this._courses.find(course => course.title === title)
+  setCourse(title: string) {
+    const course = this._courses.find(course => course.title === title);
+    this._course = course || null;
   }
 
-  setLessons(lessons){
-    this._lessons = lessons
+  setLessons(lessons: Lesson[]) {
+    this._lessons = lessons;
   }
 
-  get isAuth(){
-    return this._isAuth
+  get isAuth(): boolean {
+    return this._isAuth;
   }
 
-  get user(){
-    return this._user
+  get user(): User | null {
+    return this._user;
   }
 
-  get courses(){
-    return this._courses
+  get courses(): Course[] {
+    return this._courses;
   }
 
-  get course(){
-    if (!this._course){
-      this.setCourse(this.courses[0].title)
-    } 
-    return this._course
+  get course(): Course | null {
+    if (!this._course && this._courses.length > 0) {
+      this.setCourse(this._courses[0].title);
+    }
+    return this._course;
   }
 
-  get lessons(){
-    return this._lessons
+  get lessons(): Lesson[] {
+    return this._lessons;
   }
 }

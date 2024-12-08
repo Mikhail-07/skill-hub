@@ -1,6 +1,6 @@
-import { Course, Lesson } from "@/types";
+import { Course, CourseData, Lesson, LessonData } from "@/types";
 
-export const prepareFormData = (courseData: Course, lessons: Lesson[]): FormData => {
+export const prepareFormData = (courseData: CourseData, lessons: LessonData[]): FormData => {
   const formData = new FormData();
 
   // Добавление основных данных курса

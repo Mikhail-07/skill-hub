@@ -1,6 +1,11 @@
-import React from 'react'
+import React, { FC } from 'react'
 
-const AchieveSection = ({achievements, header}) => {
+interface AchieveSectionProps {
+  achievements: string[]
+  header: string
+}
+
+const AchieveSection: FC <AchieveSectionProps> = ({achievements, header}) => {
   return (
     <section id="achievements" className="py-12">
         <h2 className="text-3xl font-bold text-center mb-8">{header}</h2>
