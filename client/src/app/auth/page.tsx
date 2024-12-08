@@ -18,6 +18,8 @@ const AuthPage = () => {
     surname: ''
   });
 
+  console.log(isLogin)
+
   const handleChange = (field: string, value: string) => {
     setFormValues({ ...formValues, [field]: value });
   };
@@ -81,14 +83,14 @@ const AuthPage = () => {
               {isLogin ? (
                 <>
                   Нет аккаунта?{' '}
-                  <button onClick={() => setIsLogin(false)} className="text-blue-500 hover:underline">
+                  <button onClick={() => setIsLogin(false)} type="button" className="text-blue-500 hover:underline">
                     Зарегистрироваться
                   </button>
                 </>
               ) : (
                 <>
                   Уже есть аккаунт?{' '}
-                  <button onClick={() => setIsLogin(true)} className="text-blue-500 hover:underline">
+                  <button onClick={() => setIsLogin(true)} type="button" className="text-blue-500 hover:underline">
                     Войти
                   </button>
                 </>
