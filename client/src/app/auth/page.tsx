@@ -18,8 +18,6 @@ const AuthPage = () => {
     surname: ''
   });
 
-  console.log(isLogin)
-
   const handleChange = (field: string, value: string) => {
     setFormValues({ ...formValues, [field]: value });
   };
