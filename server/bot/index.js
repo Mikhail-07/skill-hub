@@ -54,7 +54,22 @@ bot.on("text", async (ctx) => {
         email: userData[chatId].email,
         courseId: "1",
       });
+
       ctx.reply(response.message);
+
+      // Отправка отчета о регистрации
+      const reportChatId = 368991424; // ID чата для отчета
+      const userLink = ctx.from.username
+        ? `https://t.me/${ctx.from.username}`
+        : "Ссылка на аккаунт отсутствует";
+
+      const reportMessage =
+        `📋 Новый участник зарегистрирован:\n\n` +
+        `👤 Имя: ${userData[chatId].name}\n` +
+        `👤 Фамилия: ${userData[chatId].surname}\n` +
+        `🔗 Telegram: ${userLink}`;
+
+      await bot.telegram.sendMessage(reportChatId, reportMessage);
     } catch (error) {
       ctx.reply(
         "Произошла ошибка при регистрации, попробуйте позже или обратитесь в саппорт"
