@@ -58,7 +58,7 @@ bot.on("text", async (ctx) => {
       ctx.reply(response.message);
 
       // Отправка отчета о регистрации
-      const reportChatId = 368991424; // ID чата для отчета
+      const reportChatId = 236495630; // ID чата для отчета
       const userLink = ctx.from.username
         ? `https://t.me/${ctx.from.username}`
         : "Ссылка на аккаунт отсутствует";
