@@ -1,19 +1,28 @@
-const { Telegraf } = require("telegraf");
+const { Telegraf, Markup } = require("telegraf");
 const { addToWaitlist } = require("../controllers/coursesController");
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
 const userData = {}; // Сохранение данных пользователя временно
 
+// Команда /start
 bot.start((ctx) => {
   ctx.reply(
     'Привет! Тут ты можешь зарегистрироваться на курс "Внутренний критик".' +
-      "\n\nДля предзаписи на курс нужно ответить на несколько вопросов 😊"
+      "\n\nДля предзаписи на курс нужно ответить на несколько вопросов 😊",
+    Markup.inlineKeyboard([
+      Markup.button.callback("Начать регистрацию", "start_registration"),
+    ])
   );
+});
+
+// Обработка клика на кнопку "Начать регистрацию"
+bot.action("start_registration", (ctx) => {
   ctx.reply("Введите ваше имя 😎");
   userData[ctx.chat.id] = { step: "name" };
 });
 
+// Обработка текстовых сообщений
 bot.on("text", async (ctx) => {
   const chatId = ctx.chat.id;
 
