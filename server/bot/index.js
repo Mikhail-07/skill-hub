@@ -64,12 +64,12 @@ bot.on("text", async (ctx) => {
         : "Ссылка на аккаунт отсутствует";
 
       const reportMessage =
-        `📋 Новый участник зарегистрирован:\n\n` +
-        `👤 Имя: ${userData[chatId].name}\n` +
-        `👤 Фамилия: ${userData[chatId].surname}\n` +
-        `🔗 Telegram: ${userLink}`;
-
-      await bot.telegram.sendMessage(reportChatId, reportMessage);
+        `Привет! 🌟\n\n` +
+        `🎉 Новый участник курса "Внутренний критик"!\n\n` +
+        `📝 Имя: ${userData[chatId].name}\n` +
+        `📝 Фамилия: ${userData[chatId].surname}\n` +
+        `💬 Telegram: ${userLink}\n\n` +
+        (await bot.telegram.sendMessage(reportChatId, reportMessage));
     } catch (error) {
       ctx.reply(
         "Произошла ошибка при регистрации, попробуйте позже или обратитесь в саппорт"
