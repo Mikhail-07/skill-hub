@@ -195,9 +195,11 @@ class UserController {
     })
 
     const formattedUsers = users.map((user) => {
-      const allCourses = user.Orders.flatMap((order) =>
-        order.OrderCourses.map((oc) => oc.Course)
-      )
+      const allCourses =
+        user.Orders?.flatMap(
+          (order) => order?.OrderCourses?.map((oc) => oc?.Course) || []
+        ) || []
+
       return {
         id: user.id,
         fullName: `${user.name} ${user.surname}`,
@@ -205,7 +207,7 @@ class UserController {
         email: user.email || "Неизвестно",
         chatId: user.chatId || "Неизвестно",
         lastCourse:
-          allCourses.length > 0
+          allCourses.length > 0 && allCourses[allCourses.length - 1]
             ? allCourses[allCourses.length - 1].title
             : null,
         totalCourses: allCourses.length,
