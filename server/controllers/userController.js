@@ -18,6 +18,48 @@ const generateJwt = (id, email, role, name, surname) => {
   })
 }
 
+async function fetchAllUsers() {
+  const users = await User.findAll({
+    attributes: ["id", "name", "surname", "email", "phone", "telegram"],
+    include: [
+      {
+        model: Order,
+        attributes: ["id"],
+        include: [
+          {
+            model: OrderCourse,
+            attributes: ["id"],
+            include: [
+              {
+                model: Course,
+                attributes: ["id", "title"],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  })
+
+  const formattedUsers = users.map((user) => {
+    const allCourses = user.Orders.flatMap((order) =>
+      order.OrderCourses.map((oc) => oc.Course)
+    )
+    return {
+      id: user.id,
+      fullName: `${user.name} ${user.surname}`,
+      phone: user.phone,
+      email: user.email,
+      telegram: user.telegram,
+      lastCourse:
+        allCourses.length > 0 ? allCourses[allCourses.length - 1].title : null,
+      totalCourses: allCourses.length,
+    }
+  })
+
+  return formattedUsers
+}
+
 class UserController {
   async findUserByEmail(email) {
     return await User.findOne({ where: { email } })
@@ -161,51 +203,9 @@ class UserController {
 
   async getAllUsers(req, res, next) {
     try {
-      console.log("ПОПЫТКА ПОЛУЧИТЬ ВСЕМ ЮЗЕРОВ")
-      const users = await User.findAll({
-        attributes: ["id", "name", "surname", "email", "phone", "telegram"],
-        include: [
-          {
-            model: Order,
-            attributes: ["id"],
-            include: [
-              {
-                model: OrderCourse,
-                attributes: ["id"],
-                include: [
-                  {
-                    model: Course,
-                    attributes: ["id", "title"],
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-      })
-
-      const formattedUsers = users.map((user) => {
-        const allCourses = user.Orders.flatMap((order) =>
-          order.OrderCourses.map((oc) => oc.Course)
-        )
-        const res = {
-          id: user.id,
-          fullName: `${user.name} ${user.surname}`,
-          phone: user.phone,
-          email: user.email,
-          telegram: user.telegram,
-          lastCourse:
-            allCourses.length > 0
-              ? allCourses[allCourses.length - 1].title
-              : null,
-          totalCourses: allCourses.length,
-        }
-        console.log("ОПРЕДЕЛИЛ ЮЗЕРА: ", res)
-        return res // <--- тут нужно вернуть res, а не user
-      })
-
-      console.log("ОТПРАВИЛ ЮЗЕРОВ НА КЛИЕНТА: ", formattedUsers)
-      return res.json(formattedUsers)
+      const users = await fetchAllUsers()
+      console.log("ОТПРАВИЛ ЮЗЕРОВ НА КЛИЕНТА")
+      return res.json(users)
     } catch (error) {
       return next(
         ApiError.internal("Ошибка при получении пользователей", error)

@@ -12,7 +12,7 @@ const {
 const {
   findUserByChatId,
   registration,
-  getAllUsers,
+  fetchAllUsers,
 } = require("../controllers/userController")
 
 const BOT_TOKEN = process.env.BOT_TOKEN
@@ -159,7 +159,7 @@ bot.on("text", async (ctx) => {
 // Admin: List Users
 // ----------------
 bot.action("admin_list_users", async (ctx) => {
-  const users = await getAllUsers()
+  const users = await fetchAllUsers()
   if (!users.length) return ctx.reply("Пользователи отсутствуют.")
 
   const lines = users.map((u) => `#${u.id} ${u.name} ${u.surname} (${u.email})`)
