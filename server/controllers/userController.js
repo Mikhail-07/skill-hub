@@ -201,9 +201,9 @@ class UserController {
       return {
         id: user.id,
         fullName: `${user.name} ${user.surname}`,
-        phone: user.phone,
-        email: user.email,
-        chatId: user.chatId,
+        phone: user.phone || "Неизвестно",
+        email: user.email || "Неизвестно",
+        chatId: user.chatId || "Неизвестно",
         lastCourse:
           allCourses.length > 0
             ? allCourses[allCourses.length - 1].title
