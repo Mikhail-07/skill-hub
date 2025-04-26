@@ -201,10 +201,10 @@ class UserController {
           totalCourses: allCourses.length,
         }
         console.log("ОПРЕДЕЛИЛ ЮЗЕРА: ", res)
-        return user
+        return res // <--- тут нужно вернуть res, а не user
       })
 
-      console.log("ОТПРАВИЛ ЮЗЕРОВ НА КЛИЕНТА: ", res.json(formattedUsers))
+      console.log("ОТПРАВИЛ ЮЗЕРОВ НА КЛИЕНТА: ", formattedUsers)
       return res.json(formattedUsers)
     } catch (error) {
       return next(
