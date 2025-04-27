@@ -1,7 +1,6 @@
 // services/courseService.js
 
 const { Course, Lesson, Service, Offer } = require("../models/models")
-const { saveImageAndCreateOffer } = require("../utils/fileService")
 
 class CourseService {
   async getAllOffers() {
@@ -42,7 +41,7 @@ class CourseService {
     try {
       console.log("OFFER BASE: ", offer)
       const { name, description, price, type, img } = offer
-      const result = await saveImageAndCreateOffer(
+      const result = await this.saveImageAndCreateOffer(
         name,
         description,
         price,
