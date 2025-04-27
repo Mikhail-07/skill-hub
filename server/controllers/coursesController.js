@@ -346,27 +346,20 @@ class CourseController {
     return res.json(registration)
   }
 
-  async addToWaitlist({ chatId, name, surname, email, courseId }) {
+  async addToWaitlist({ userId, offerId }) {
     try {
       // Проверяем, есть ли пользователь с такими данными
       let user = await User.findOne({
         where: {
-          name: { [Op.iLike]: name },
-          surname: { [Op.iLike]: surname },
-          chatId,
+          userId,
         },
       })
-
-      // Если пользователь не найден, создаем его
-      if (!user) {
-        user = await User.create({ chatId, name, surname, email })
-      }
 
       // Проверяем, есть ли уже запись в Waitlist для данного пользователя и курса
       const existingWaitlistEntry = await Waitlist.findOne({
         where: {
-          userId: user.id,
-          courseId,
+          userId: userId,
+          offerId,
         },
       })
 
@@ -376,8 +369,8 @@ class CourseController {
 
       // Добавляем запись в Waitlist
       await Waitlist.create({
-        userId: user.id,
-        courseId,
+        userId: userId,
+        offerId,
       })
 
       return {

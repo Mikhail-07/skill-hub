@@ -130,6 +130,7 @@ bot.action("start_flow", async (ctx) => {
 // --------------------
 // Выбор продукта
 bot.action(/offer_(\d+)/, async (ctx) => {
+  console.log("Offer selected:", ctx.match[1], "by user:", ctx.from.id)
   const offerId = ctx.match[1]
   const offers = await getAllOffers()
   const offer = offers.find((o) => o.id == offerId)
@@ -151,6 +152,12 @@ bot.action(/offer_(\d+)/, async (ctx) => {
 // --------------------
 // Регистрация на оффер
 bot.action(/register_(\d+)/, async (ctx) => {
+  console.log(
+    "Registration started for offer:",
+    ctx.match[1],
+    "by:",
+    ctx.from.id
+  )
   const chatId = ctx.chat.id
   const offer = ctx.session.selectedOffer
   if (!offer) {
@@ -166,7 +173,7 @@ bot.action(/register_(\d+)/, async (ctx) => {
   }
 
   // Уже есть в базе
-  await addToWaitlist({ chatId, offerId: offer.id })
+  await addToWaitlist({ userId: user.id, offerId: offer.id })
   await ctx.reply("Вы успешно зарегистрированы на продукт!")
 
   // Отчет организатору
@@ -214,6 +221,7 @@ bot.action("admin_all_offers", async (ctx) => {
 // Обработка текстовых сообщений
 bot.on("text", async (ctx) => {
   // Регистрация нового пользователя
+  console.log("Регестрируем нового пользователя:", ctx.from.id)
   if (ctx.session.registration) {
     const reg = ctx.session.registration
     const text = ctx.message.text.trim()
@@ -250,6 +258,7 @@ bot.on("text", async (ctx) => {
             await ctx.reply(
               "Регистрация успешна! Вы добавлены в лист ожидания."
             )
+            console.log("Сохранен новый пользователь:", ctx.from.id)
           } catch (error) {
             console.error("Ошибка регистрации:", error)
             await ctx.reply("Ошибка регистрации: " + error.message)

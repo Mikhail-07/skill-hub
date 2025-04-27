@@ -134,8 +134,8 @@ Media.belongsTo(Achieve)
 User.hasMany(Waitlist)
 Waitlist.belongsTo(User)
 
-Course.hasMany(Waitlist)
-Waitlist.belongsTo(Course)
+Offer.hasMany(Waitlist)
+Waitlist.belongsTo(Offer)
 
 Offer.hasOne(Course)
 Course.belongsTo(Offer)
