@@ -166,6 +166,7 @@ class CourseController {
 
   async createBaseOffer(offer) {
     try {
+      console.log("OFFER BASE: ", offer)
       const { name, description, price, type, img } = offer
       const res = await saveImageAndCreateOffer(
         name,
@@ -177,7 +178,7 @@ class CourseController {
 
       return res
     } catch (e) {
-      next(ApiError.badRequest(e.message))
+      console.log(e.message)
     }
   }
 
