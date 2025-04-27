@@ -110,48 +110,80 @@ bot.action(/register_(\d+)/, async (ctx) => {
   ctx.session = {} // clear session
 })
 
-// Collect user info steps
 bot.on("text", async (ctx) => {
+  // Collect user info steps
   const reg = ctx.session.registration
-  if (!reg) return // not in registration flow
-  const text = ctx.message.text
+  if (reg) {
+    const text = ctx.message.text
+    switch (reg.step) {
+      case "name":
+        reg.name = text
+        reg.step = "surname"
+        return ctx.reply("Введите вашу фамилию:")
+      case "surname":
+        reg.surname = text
+        reg.step = "phone"
+        return ctx.reply("Введите ваш номер телефона:")
+      case "phone":
+        reg.phone = text
+        reg.step = "email"
+        return ctx.reply("Введите ваш email:")
+      case "email":
+        reg.email = text
+        // finalize registration
+        const { chatId, offerId, name, surname, phone, email } = reg
+        const newUser = await registration({
+          chatId,
+          name,
+          surname,
+          phone,
+          email,
+        })
+        await addToWaitlist({ chatId, offerId })
 
-  switch (reg.step) {
-    case "name":
-      reg.name = text
-      reg.step = "surname"
-      return ctx.reply("Введите вашу фамилию:")
-    case "surname":
-      reg.surname = text
-      reg.step = "phone"
-      return ctx.reply("Введите ваш номер телефона:")
-    case "phone":
-      reg.phone = text
-      reg.step = "email"
-      return ctx.reply("Введите ваш email:")
-    case "email":
-      reg.email = text
-      // finalize registration
-      const { chatId, offerId, name, surname, phone, email } = reg
-      const newUser = await registration({
-        chatId,
-        name,
-        surname,
-        phone,
-        email,
-      })
-      await addToWaitlist({ chatId, offerId })
+        await ctx.reply("Регистрация успешна! Вы добавлены в лист ожидания.")
 
-      await ctx.reply("Регистрация успешна! Вы добавлены в лист ожидания.")
-      // report
-      const userLink2 = ctx.from.username
-        ? `https://t.me/${ctx.from.username}`
-        : "аккаунт без username"
-      const rep = `Новый участник!\nИмя: ${name} ${surname}\nТелефон: ${phone}\nEmail: ${email}\nTelegram: ${userLink2}`
-      await ctx.telegram.sendMessage(REPORT_CHAT_ID, rep)
+        const userLink = ctx.from.username
+          ? `https://t.me/${ctx.from.username}`
+          : "аккаунт без username"
+        const report = `Новый участник!\nИмя: ${name} ${surname}\nТелефон: ${phone}\nEmail: ${email}\nTelegram: ${userLink}`
+        await ctx.telegram.sendMessage(REPORT_CHAT_ID, report)
 
-      ctx.session = {}
-      break
+        ctx.session.registration = null
+        break
+    }
+  }
+
+  // ----------------------
+  // Admin: Add New Offer
+  // ----------------------
+  const no = ctx.session.newOffer
+  if (no) {
+    const t = ctx.message.text
+    switch (no.step) {
+      case "name":
+        no.name = t
+        no.step = "description"
+        return ctx.reply("Введите описание продукта:")
+      case "description":
+        no.description = t
+        no.step = "price"
+        return ctx.reply("Введите цену (число):")
+      case "price":
+        no.price = parseInt(t, 10)
+        no.step = "img"
+        return ctx.reply("Введите URL изображения:")
+      case "img":
+        no.img = t
+        no.step = "type"
+        return ctx.reply("Введите тип продукта (course/service):")
+      case "type":
+        no.type = t
+        await createBaseOffer(no)
+        await ctx.reply("Новый продукт успешно добавлен!")
+        ctx.session.newOffer = null
+        break
+    }
   }
 })
 
@@ -162,47 +194,15 @@ bot.action("admin_list_users", async (ctx) => {
   const users = await fetchAllUsers()
   if (!users.length) return ctx.reply("Пользователи отсутствуют.")
 
-  const lines = users.map((u) => `#${u.id} ${u.name} ${u.surname} (${u.email})`)
+  const lines = users.map(
+    (u) => `#${u.id} ${u.fullName} ${u.phone} (${u.email})`
+  )
   return ctx.reply(lines.join("\n"))
 })
 
-// ----------------------
-// Admin: Add New Offer
-// ----------------------
 bot.action("admin_add_offer", async (ctx) => {
   ctx.session.newOffer = { step: "name" }
   return ctx.reply("Введите название продукта:")
-})
-
-bot.on("text", async (ctx) => {
-  const no = ctx.session.newOffer
-  if (!no) return
-  const t = ctx.message.text
-  switch (no.step) {
-    case "name":
-      no.name = t
-      no.step = "description"
-      return ctx.reply("Введите описание продукта:")
-    case "description":
-      no.description = t
-      no.step = "price"
-      return ctx.reply("Введите цену (число):")
-    case "price":
-      no.price = parseInt(t, 10)
-      no.step = "img"
-      return ctx.reply("Введите URL изображения:")
-    case "img":
-      no.img = t
-      no.step = "type"
-      return ctx.reply("Введите тип продукта (" + "course/service")
-    case "type":
-      no.type = t
-      // create offer
-      await createBaseOffer(no)
-      await ctx.reply("Новый продукт успешно добавлен!")
-      ctx.session.newOffer = null
-      break
-  }
 })
 
 // --------------
