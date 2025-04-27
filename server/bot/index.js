@@ -8,13 +8,13 @@ const LocalSession = require("telegraf-session-local")
 const {
   getAllOffers,
   addToWaitlist,
-  createBaseOffer,
 } = require("../controllers/coursesController")
 const {
   findUserByChatId,
   registration,
   fetchAllUsers,
 } = require("../controllers/userController")
+const { getAllOffers, createBaseOffer } = require("../services/courseService")
 
 const BOT_TOKEN = process.env.BOT_TOKEN
 const REPORT_CHAT_ID = process.env.REPORT_CHAT_ID || 368991424

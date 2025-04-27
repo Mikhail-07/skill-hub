@@ -12,6 +12,7 @@ const {
   Service,
   Offer,
 } = require("../models/models")
+const courseService = require("../services/courseService")
 const ApiError = require("../error/ApiError")
 const { Op } = require("sequelize")
 const { Console } = require("console")
@@ -164,24 +165,6 @@ class CourseController {
     }
   }
 
-  async createBaseOffer(offer) {
-    try {
-      console.log("OFFER BASE: ", offer)
-      const { name, description, price, type, img } = offer
-      const res = await saveImageAndCreateOffer(
-        name,
-        description,
-        price,
-        type,
-        img
-      )
-
-      return res
-    } catch (e) {
-      console.log(e.message)
-    }
-  }
-
   async edit(req, res, next) {
     try {
       const { id, title, subTitle, description, price, lessons } = req.body
@@ -306,37 +289,7 @@ class CourseController {
 
   async getAllOffers(req, res, next) {
     try {
-      const courses = await Course.findAll({
-        include: [{ model: Lesson, attributes: ["id", "title"] }],
-      })
-
-      const services = await Service.findAll() // Просто все активные услуги
-
-      // Приводим к единому виду
-      const courseOffers = courses.map((course) => ({
-        id: course.id,
-        type: "course",
-        title: course.title,
-        subTitle: course.subTitle,
-        description: course.description,
-        img: course.img,
-        price: course.price,
-        category: course.category,
-        lessons: course.lessons || [],
-      }))
-
-      const serviceOffers = services.map((service) => ({
-        id: service.id,
-        type: "service",
-        name: service.name,
-        description: service.description,
-        price: service.price,
-        img: service.img,
-        serviceType: service.type,
-      }))
-
-      const offers = [...courseOffers, ...serviceOffers]
-
+      const offers = await courseService.getAllOffers()
       return res.json(offers)
     } catch (error) {
       next(error)
