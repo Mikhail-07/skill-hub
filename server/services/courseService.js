@@ -1,6 +1,6 @@
 // services/courseService.js
 
-const { Course, Lesson, Service, Offer } = require("../models")
+const { Course, Lesson, Service, Offer } = require("../models/models")
 const { saveImageAndCreateOffer } = require("../utils/fileService")
 
 class CourseService {
