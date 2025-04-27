@@ -26,7 +26,7 @@ bot.use(sessions.middleware())
 function buildOffersKeyboard(offers) {
   return Markup.inlineKeyboard(
     offers.map((o) => Markup.button.callback(o.name, `offer_${o.id}`)),
-    { columns: 2 }
+    { columns: 1 }
   )
 }
 
@@ -57,7 +57,6 @@ bot.start(async (ctx) => {
     // Для пользователя отправляем inline-клавиатуру и reply-кнопку
     const offers = await getAllOffers()
     await ctx.reply(text, buildOffersKeyboard(offers))
-    await ctx.reply("Используйте кнопки ниже:", buildMenuKeyboard(isAdmin))
   }
 })
 
