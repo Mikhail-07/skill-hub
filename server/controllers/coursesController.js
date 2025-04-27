@@ -166,8 +166,25 @@ class CourseController {
 
   async createBaseOffer(offer) {
     const { name, description, price, type, img } = offer
-    const result = await offerFilling(name, description, price, type, img)
-    return result
+    try {
+      const { name, description, price, type } = req.body
+      const { img } = req.files
+
+      console.log("BODY:", req.body)
+      console.log("FILES:", req.files)
+
+      const offer = await saveImageAndCreateOffer(
+        name,
+        description,
+        price,
+        type,
+        img
+      )
+
+      return res.json(offer)
+    } catch (e) {
+      next(ApiError.badRequest(e.message))
+    }
   }
 
   async edit(req, res, next) {
