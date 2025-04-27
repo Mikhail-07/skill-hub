@@ -11,7 +11,7 @@ const {
   registration,
   fetchAllUsers,
 } = require("../controllers/userController")
-const { getAllOffers, createBaseOffer } = require("../services/courseService")
+const { getAllOffers, createService } = require("../services/courseService")
 
 const BOT_TOKEN = process.env.BOT_TOKEN
 const REPORT_CHAT_ID = process.env.REPORT_CHAT_ID || 368991424
@@ -228,7 +228,7 @@ bot.on("text", async (ctx) => {
           break
         case "type":
           offer.type = text
-          await createBaseOffer(offer)
+          await createService(offer)
           await ctx.reply("✅ Продукт успешно создан!")
           delete ctx.session.newOffer
           break

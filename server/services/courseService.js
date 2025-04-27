@@ -83,8 +83,30 @@ async function createBaseOffer(offer) {
   }
 }
 
+async function createService(serviceData) {
+  try {
+    console.log("Создание сервиса:", serviceData)
+
+    // Сначала создаем оффер
+    const createdOffer = await createBaseOffer(serviceData)
+
+    // Затем создаем сервис, привязывая его к офферу
+    const createdService = await Service.create({
+      offerId: createdOffer.id,
+      typeService: "service", // например 'lecture', 'consultation' и т.д.
+    })
+
+    console.log("SERVICE CREATED!")
+    return { offer: createdOffer, service: createdService }
+  } catch (error) {
+    console.error("Ошибка при создании сервиса:", error.message)
+    throw error
+  }
+}
+
 // Экспортируем все функции вместе
 module.exports = {
   getAllOffers,
   createBaseOffer,
+  createService,
 }
