@@ -40,14 +40,7 @@ class CourseService {
   async createBaseOffer(offer) {
     try {
       console.log("OFFER BASE: ", offer)
-      const { name, description, price, type, img } = offer
-      const result = await this.saveImageAndCreateOffer(
-        name,
-        description,
-        price,
-        type,
-        img
-      )
+      const result = await this.saveImageAndCreateOffer(offer)
 
       return result
     } catch (error) {
