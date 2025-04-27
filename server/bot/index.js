@@ -40,6 +40,7 @@ function buildAdminKeyboard() {
   return Markup.inlineKeyboard([
     Markup.button.callback("Получить список клиентов", "admin_list_users"),
     Markup.button.callback("Добавить продукт", "admin_add_offer"),
+    Markup.button.callback("Все предложения", "admin_all_offers"),
   ])
 }
 
@@ -128,6 +129,18 @@ bot.action(/register_(\d+)/, async (ctx) => {
   // Очистим сессию
   delete ctx.session.selectedOffer
 })
+
+// --------------------
+// Получить все продукты админу
+bot.action("admin_all_offers", async (ctx) => {
+  const offers = await getAllOffers()
+  if (!offers.length) {
+    return ctx.reply("Нет доступных предложений.")
+  }
+  const keyboard = buildOffersKeyboard(offers)
+  await ctx.editMessageText("Все доступные предложения:", keyboard)
+})
+// --------------------
 
 // --------------------
 // Обработка текстовых сообщений
