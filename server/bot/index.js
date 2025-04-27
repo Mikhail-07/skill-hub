@@ -11,8 +11,9 @@ const { getAllOffers, createService } = require("../services/courseService")
 const userService = require("../services/userService")
 
 const BOT_TOKEN = process.env.BOT_TOKEN
-const REPORT_CHAT_ID = process.env.REPORT_CHAT_ID || 368991424
-const ADMIN_CHAT_ID = 368991424
+const ADMIN_CHAT_ID = process.env.ADMIN_CHAT_ID
+const REPORT_CHAT_ID_1 = process.env.REPORT_CHAT_ID_1
+const REPORT_CHAT_ID_2 = process.env.REPORT_CHAT_ID_2
 
 const bot = new Telegraf(BOT_TOKEN)
 
@@ -182,8 +183,9 @@ bot.action(/register_(\d+)/, async (ctx) => {
   const userLink = ctx.from.username
     ? `https://t.me/${ctx.from.username}`
     : "аккаунт без username"
-  const report = `Новый участник!\nИмя: ${user.name} ${user.surname}\nTelegram: ${userLink}`
-  await ctx.telegram.sendMessage(REPORT_CHAT_ID, report)
+  const report = `Новая заявка на: *${ctx.session.selectedOffer}*!\nИмя: ${user.name} ${user.surname}\nTelegram: ${userLink}`
+  await ctx.telegram.sendMessage(REPORT_CHAT_ID_1, report)
+  await ctx.telegram.sendMessage(REPORT_CHAT_ID_2, report)
 
   // Очистим сессию
   delete ctx.session.selectedOffer
@@ -269,8 +271,9 @@ bot.on("text", async (ctx) => {
           const userLink = ctx.from.username
             ? `https://t.me/${ctx.from.username}`
             : "аккаунт без username"
-          const report = `Новый участник!\nИмя: ${name} ${surname}\nТелефон: ${phone}\nEmail: ${email}\nTelegram: ${userLink}`
-          await ctx.telegram.sendMessage(REPORT_CHAT_ID, report)
+          const report = `Зарегестрирован новый человек!\nИмя: ${name} ${surname}\nТелефон: ${phone}\nEmail: ${email}\nTelegram: ${userLink}`
+          await ctx.telegram.sendMessage(REPORT_CHAT_ID_1, report)
+          await ctx.telegram.sendMessage(REPORT_CHAT_ID_2, report)
 
           // Очистка
           delete ctx.session.registration
@@ -317,8 +320,8 @@ bot.on("text", async (ctx) => {
           break
         case "img":
           offer.img = text
-          offer.step = "type"
-          await ctx.reply("Введите тип продукта (course/service):")
+          // offer.step = "type"
+          // await ctx.reply("Введите тип продукта (course/service):")
           break
         case "type":
           offer.type = text
