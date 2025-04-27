@@ -75,7 +75,6 @@ async function createService(serviceData) {
   }
 }
 
-// Экспортируем все функции вместе
 module.exports = {
   getAllOffers,
   createBaseOffer,

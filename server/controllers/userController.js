@@ -29,7 +29,7 @@ class UserController {
 
   async registration(req, res, next) {
     try {
-      const { email, password, name, surname, role, chatId } = req.body
+      const { email, password, name, surname, role, chatId, phone } = req.body
 
       if (!email && !chatId) {
         return next(ApiError.badRequest("Не задан ни email, ни chatId"))
@@ -56,19 +56,19 @@ class UserController {
         password: hashPassword,
         name,
         surname,
-        role,
+        role: role || "USER",
         chatId,
+        phone,
       })
 
       if (!chatId) {
         // регистрация с сайта
         await Order.create({ userId: user.id })
-
         const token = generateJwt(user.id, email, user.role, name, surname)
         return res.json({ token })
       } else {
         // регистрация с бота
-        return res.json({ user })
+        return res.json({ message: "Регистрация через бота успешна", user })
       }
     } catch (e) {
       next(ApiError.badRequest(e.message))

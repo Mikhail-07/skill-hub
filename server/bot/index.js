@@ -12,6 +12,7 @@ const {
   fetchAllUsers,
 } = require("../controllers/userController")
 const { getAllOffers, createService } = require("../services/courseService")
+const userService = require("../services/userService")
 
 const BOT_TOKEN = process.env.BOT_TOKEN
 const REPORT_CHAT_ID = process.env.REPORT_CHAT_ID || 368991424
@@ -185,10 +186,22 @@ bot.on("text", async (ctx) => {
           reg.email = text
           // Сохраняем нового пользователя и ждем лист
           const { chatId, offerId, name, surname, phone, email } = reg
-          await registration({ chatId, name, surname, phone, email })
-          await addToWaitlist({ chatId, offerId })
-          await ctx.reply("Регистрация успешна! Вы добавлены в лист ожидания.")
-
+          try {
+            await userService.registrationFromBot({
+              chatId,
+              name,
+              surname,
+              phone,
+              email,
+            })
+            await addToWaitlist({ chatId, offerId })
+            await ctx.reply(
+              "Регистрация успешна! Вы добавлены в лист ожидания."
+            )
+          } catch (error) {
+            console.error("Ошибка регистрации:", error)
+            await ctx.reply("Ошибка регистрации: " + error.message)
+          }
           // Отчет организатору
           const userLink = ctx.from.username
             ? `https://t.me/${ctx.from.username}`
