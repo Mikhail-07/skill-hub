@@ -1,6 +1,8 @@
 // services/courseService.js
 
 const { Course, Lesson, Service, Offer } = require("../models/models")
+const uuid = require("uuid")
+const path = require("path")
 
 class CourseService {
   async getAllOffers() {
@@ -49,6 +51,14 @@ class CourseService {
     }
   }
   async saveImageAndCreateOffer({ name, description, price, type, img }) {
+    console.log(
+      "saveImageAndCreateOffer вызван с: ",
+      name,
+      description,
+      price,
+      type,
+      img
+    )
     const imgFileName = uuid.v4() + ".jpg"
     img.mv(path.resolve(__dirname, "..", "static", imgFileName))
 
