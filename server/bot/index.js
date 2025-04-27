@@ -44,8 +44,8 @@ function buildAdminKeyboard() {
 // --------------------
 bot.start(async (ctx) => {
   ctx.session = {}
-  // const isAdmin = ctx.chat.id === ADMIN_CHAT_ID
-  const isAdmin = false
+  const isAdmin = ctx.chat.id === ADMIN_CHAT_ID
+  // const isAdmin = false
 
   const text = isAdmin
     ? "Добро пожаловать, Админ!"
@@ -113,8 +113,8 @@ function adminOnly(handler) {
 // --------------------
 // Главное меню после нажатия START
 bot.action("start_flow", async (ctx) => {
-  // const isAdmin = ctx.chat.id === ADMIN_CHAT_ID
-  const isAdmin = false
+  const isAdmin = ctx.chat.id === ADMIN_CHAT_ID
+  // const isAdmin = false
 
   const text = isAdmin
     ? "Добро пожаловать, Админ!"
