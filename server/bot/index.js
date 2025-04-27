@@ -57,10 +57,7 @@ bot.start(async (ctx) => {
     inlineKeyboard = buildOffersKeyboard(offers)
   }
 
-  await ctx.reply(text, {
-    ...inlineKeyboard,
-    ...buildMenuKeyboard(isAdmin),
-  })
+  await ctx.reply(text, buildMenuKeyboard(isAdmin))
 })
 
 // --------------------
