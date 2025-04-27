@@ -166,8 +166,8 @@ class CourseController {
 
   async createBaseOffer(offer) {
     const { name, description, price, type, img } = offer
-    const offer = await offerFilling(name, description, price, type, img)
-    return offer
+    const result = await offerFilling(name, description, price, type, img)
+    return result
   }
 
   async edit(req, res, next) {
