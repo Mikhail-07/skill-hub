@@ -116,82 +116,107 @@ bot.action(/register_(\d+)/, async (ctx) => {
 })
 
 bot.on("text", async (ctx) => {
-  // Collect user info steps
-  const reg = ctx.session.registration
-  if (reg) {
+  // Проверяем, какой процесс активен (регистрация или создание оффера)
+  if (ctx.session.registration) {
+    // Обработка регистрации пользователя
+    const reg = ctx.session.registration
     const text = ctx.message.text
-    switch (reg.step) {
-      case "name":
-        reg.name = text
-        reg.step = "surname"
-        return ctx.reply("Введите вашу фамилию:")
-      case "surname":
-        reg.surname = text
-        reg.step = "phone"
-        return ctx.reply("Введите ваш номер телефона:")
-      case "phone":
-        reg.phone = text
-        reg.step = "email"
-        return ctx.reply("Введите ваш email:")
-      case "email":
-        reg.email = text
-        // finalize registration
-        const { chatId, offerId, name, surname, phone, email } = reg
-        const newUser = await registration({
-          chatId,
-          name,
-          surname,
-          phone,
-          email,
-        })
-        await addToWaitlist({ chatId, offerId })
 
-        await ctx.reply("Регистрация успешна! Вы добавлены в лист ожидания.")
+    try {
+      switch (reg.step) {
+        case "name":
+          reg.name = text
+          reg.step = "surname"
+          await ctx.reply("Введите вашу фамилию:")
+          break
+        case "surname":
+          reg.surname = text
+          reg.step = "phone"
+          await ctx.reply("Введите ваш номер телефона:")
+          break
+        case "phone":
+          reg.phone = text
+          reg.step = "email"
+          await ctx.reply("Введите ваш email:")
+          break
+        case "email":
+          reg.email = text
+          // Финализация регистрации
+          const { chatId, offerId, name, surname, phone, email } = reg
+          await registration({
+            chatId,
+            name,
+            surname,
+            phone,
+            email,
+          })
+          await addToWaitlist({ chatId, offerId })
 
-        const userLink = ctx.from.username
-          ? `https://t.me/${ctx.from.username}`
-          : "аккаунт без username"
-        const report = `Новый участник!\nИмя: ${name} ${surname}\nТелефон: ${phone}\nEmail: ${email}\nTelegram: ${userLink}`
-        await ctx.telegram.sendMessage(REPORT_CHAT_ID, report)
+          await ctx.reply("Регистрация успешна! Вы добавлены в лист ожидания.")
 
-        ctx.session.registration = null
-        break
+          const userLink = ctx.from.username
+            ? `https://t.me/${ctx.from.username}`
+            : "аккаунт без username"
+          const report = `Новый участник!\nИмя: ${name} ${surname}\nТелефон: ${phone}\nEmail: ${email}\nTelegram: ${userLink}`
+          await ctx.telegram.sendMessage(REPORT_CHAT_ID, report)
+
+          ctx.session.registration = null
+          break
+      }
+    } catch (error) {
+      console.error("Ошибка при регистрации:", error)
+      await ctx.reply(
+        "Произошла ошибка при регистрации. Пожалуйста, начните заново."
+      )
+      ctx.session.registration = null
     }
-  }
-
-  // ----------------------
-  // Admin: Add New Offer
-  // ----------------------
-  const no = ctx.session.newOffer
-  if (no) {
+  } else if (ctx.session.newOffer) {
+    // Обработка создания нового оффера
+    const no = ctx.session.newOffer
     const t = ctx.message.text
-    switch (no.step) {
-      case "name":
-        no.name = t
-        no.step = "description"
-        return ctx.reply("Введите описание продукта:")
-      case "description":
-        no.description = t
-        no.step = "price"
-        return ctx.reply("Введите цену (число):")
-      case "price":
-        no.price = parseInt(t, 10)
-        no.step = "img"
-        return ctx.reply("Введите URL изображения:")
-      case "img":
-        no.img = t
-        no.step = "type"
-        return ctx.reply("Введите тип продукта (course/service):")
-      case "type":
-        no.type = t
-        await createBaseOffer(no)
-        await ctx.reply("Новый продукт успешно добавлен!")
-        ctx.session.newOffer = null
-        break
+
+    try {
+      switch (no.step) {
+        case "name":
+          no.name = t
+          no.step = "description"
+          await ctx.reply("Введите описание продукта:")
+          break
+        case "description":
+          no.description = t
+          no.step = "price"
+          await ctx.reply("Введите цену (число):")
+          break
+        case "price":
+          no.price = parseInt(t, 10)
+          if (isNaN(no.price)) {
+            await ctx.reply("Пожалуйста, введите корректное число для цены:")
+            return
+          }
+          no.step = "img"
+          await ctx.reply("Введите URL изображения:")
+          break
+        case "img":
+          no.img = t
+          no.step = "type"
+          await ctx.reply("Введите тип продукта (course/service):")
+          break
+        case "type":
+          no.type = t
+          await createBaseOffer(no)
+          await ctx.reply("Новый продукт успешно добавлен!")
+          ctx.session.newOffer = null
+          return
+      }
+    } catch (error) {
+      console.error("Ошибка при создании оффера:", error)
+      await ctx.reply(
+        "Произошла ошибка при создании продукта. Пожалуйста, начните заново."
+      )
+      ctx.session.newOffer = null
     }
   }
 })
-
 // ----------------
 // Admin: List Users
 // ----------------
