@@ -3,7 +3,8 @@
 // -------------------------
 // Imports & Initialization
 // -------------------------
-const { Telegraf, Markup, session } = require("telegraf")
+const { Telegraf, Markup } = require("telegraf")
+const LocalSession = require("telegraf-session-local")
 const {
   getAllOffers,
   addToWaitlist,
@@ -20,12 +21,9 @@ const REPORT_CHAT_ID = process.env.REPORT_CHAT_ID || 368991424
 const ADMIN_CHAT_ID = 368991424
 
 const bot = new Telegraf(BOT_TOKEN)
-bot.use((ctx, next) => {
-  if (!ctx.session) {
-    ctx.session = {}
-  }
-  return next()
-})
+
+const sessions = new LocalSession({ database: "session_db.json" })
+bot.use(sessions.middleware())
 
 // ---------------
 // Helper methods
@@ -120,8 +118,8 @@ const DEBUG = true
 // Обработчик кнопки "Добавить продукт"
 bot.action("admin_add_offer", async (ctx) => {
   try {
-    if (!ctx.session) ctx.session = {}
     ctx.session.newOffer = { step: "name" }
+    await sessions.DB.saveSession(ctx.chat.id, ctx.session) // Сохраняем сразу
 
     if (DEBUG) {
       console.log("ADMIN: Started new offer creation")
@@ -251,6 +249,7 @@ bot.on("text", async (ctx) => {
 
       // Принудительное сохранение сессии
       ctx.session = { ...ctx.session }
+      await sessions.DB.saveSession(ctx.chat.id, ctx.session)
       if (DEBUG) {
         console.log("Updated session:", JSON.stringify(ctx.session, null, 2))
       }
