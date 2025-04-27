@@ -6,10 +6,7 @@
 const { Telegraf, Markup } = require("telegraf")
 const LocalSession = require("telegraf-session-local")
 const { addToWaitlist } = require("../controllers/coursesController")
-const {
-  findUserByChatId,
-  fetchAllUsers,
-} = require("../controllers/userController")
+const { fetchAllUsers } = require("../controllers/userController")
 const { getAllOffers, createService } = require("../services/courseService")
 const userService = require("../services/userService")
 
@@ -104,7 +101,7 @@ bot.action(/register_(\d+)/, async (ctx) => {
     return ctx.reply("Сессия устарела, выберите оффер заново.")
   }
 
-  const user = await findUserByChatId(chatId)
+  const user = await userService.findUserByChatId(chatId)
   if (!user) {
     // Начинаем сбор данных
     ctx.session.registration = { chatId, offerId: offer.id, step: "name" }
