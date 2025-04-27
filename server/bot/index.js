@@ -43,7 +43,8 @@ function buildAdminKeyboard() {
 // --------------------
 bot.start(async (ctx) => {
   ctx.session = {}
-  const isAdmin = ctx.chat.id === ADMIN_CHAT_ID
+  // const isAdmin = ctx.chat.id === ADMIN_CHAT_ID
+  const isAdmin = false
 
   const text = isAdmin
     ? "Добро пожаловать, Админ!"
@@ -61,7 +62,7 @@ bot.start(async (ctx) => {
 })
 
 // ----------------
-// Слушаетили бургер меню
+// Слушатели бургер меню
 // ----------------
 
 bot.hears("🏠 Главное меню", async (ctx) => {
@@ -112,7 +113,9 @@ function adminOnly(handler) {
 // --------------------
 // Главное меню после нажатия START
 bot.action("start_flow", async (ctx) => {
-  const isAdmin = ctx.chat.id === ADMIN_CHAT_ID
+  // const isAdmin = ctx.chat.id === ADMIN_CHAT_ID
+  const isAdmin = false
+
   const text = isAdmin
     ? "Добро пожаловать, Админ!"
     : "Привет! Выберите продукт для регистрации:"
@@ -369,8 +372,10 @@ bot.action("admin_add_offer", async (ctx) => {
 function buildMenuKeyboard(isAdmin) {
   if (isAdmin) {
     return Markup.keyboard([
-      ["🏠 Главное меню", "📋 Все предложения"],
-      ["➕ Добавить продукт", "👥 Список клиентов"],
+      ["🏠 Главное меню"],
+      ["📋 Все предложения"],
+      ["➕ Добавить продукт"],
+      ["👥 Список клиентов"],
     ])
       .resize()
       .persistent(true)
