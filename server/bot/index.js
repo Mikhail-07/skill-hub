@@ -49,15 +49,8 @@ bot.start(async (ctx) => {
     ? "Добро пожаловать, Админ!"
     : "Привет! Выберите продукт для регистрации:"
 
-  let inlineKeyboard
-  if (isAdmin) {
-    inlineKeyboard = buildAdminKeyboard()
-  } else {
-    const offers = await getAllOffers()
-    inlineKeyboard = buildOffersKeyboard(offers)
-  }
-
-  await ctx.reply(text, buildMenuKeyboard(isAdmin))
+  await ctx.reply(text) // просто приветствие
+  await ctx.reply("Выберите действие:", buildMenuKeyboard(isAdmin))
 })
 
 // --------------------
