@@ -134,7 +134,7 @@ bot.action("admin_add_offer", async (ctx) => {
   }
 })
 
-bbot.on("text", async (ctx) => {
+bot.on("text", async (ctx) => {
   try {
     if (DEBUG) {
       console.log("\nReceived text:", ctx.message.text)
