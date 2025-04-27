@@ -49,9 +49,64 @@ bot.start(async (ctx) => {
     ? "Добро пожаловать, Админ!"
     : "Привет! Выберите продукт для регистрации:"
 
-  await ctx.reply(text) // просто приветствие
-  await ctx.reply("Выберите действие:", buildMenuKeyboard(isAdmin))
+  if (isAdmin) {
+    // Для админа отправляем reply-клавиатуру
+    await ctx.reply(text, buildMenuKeyboard(isAdmin))
+  } else {
+    // Для пользователя отправляем inline-клавиатуру и reply-кнопку
+    const offers = await getAllOffers()
+    await ctx.reply(text, buildOffersKeyboard(offers))
+    await ctx.reply("Используйте кнопки ниже:", buildMenuKeyboard(isAdmin))
+  }
 })
+// ----------------
+// Слушаетили бургер меню
+// ----------------
+
+bot.hears("🏠 Главное меню", async (ctx) => {
+  const offers = await getAllOffers()
+  await ctx.reply(
+    "Выберите продукт для регистрации:",
+    buildOffersKeyboard(offers)
+  )
+})
+
+bot.hears("📋 Все предложения", async (ctx) => {
+  const offers = await getAllOffers()
+  await ctx.reply("Все предложения:", buildOffersKeyboard(offers))
+})
+
+bot.hears(
+  "➕ Добавить продукт",
+  adminOnly(async (ctx) => {
+    ctx.session.newOffer = { step: "name" }
+    await ctx.reply("Введите название продукта:")
+  })
+)
+
+bot.hears(
+  "👥 Список клиентов",
+  adminOnly(async (ctx) => {
+    const users = await fetchAllUsers()
+    if (!users.length) {
+      return ctx.reply("Пользователи отсутствуют.")
+    }
+    const lines = users.map(
+      (u) => `#${u.id} ${u.fullName} ${u.phone} (${u.email})`
+    )
+    await ctx.reply(lines.join("\n"))
+  })
+)
+
+function adminOnly(handler) {
+  return async (ctx) => {
+    if (ctx.chat.id !== ADMIN_CHAT_ID) {
+      await ctx.reply("🚫 У вас нет прав для выполнения этой команды.")
+      return
+    }
+    await handler(ctx)
+  }
+}
 
 // --------------------
 // Главное меню после нажатия START
@@ -317,55 +372,6 @@ function buildMenuKeyboard(isAdmin) {
     return Markup.keyboard([["🏠 Главное меню"]])
       .resize()
       .persistent(true)
-  }
-}
-
-// ----------------
-// Функция для создания бургер меню
-// ----------------
-
-bot.hears("🏠 Главное меню", async (ctx) => {
-  const offers = await getAllOffers()
-  await ctx.reply(
-    "Выберите продукт для регистрации:",
-    buildOffersKeyboard(offers)
-  )
-})
-
-bot.hears("📋 Все предложения", async (ctx) => {
-  const offers = await getAllOffers()
-  await ctx.reply("Все предложения:", buildOffersKeyboard(offers))
-})
-
-bot.hears(
-  "➕ Добавить продукт",
-  adminOnly(async (ctx) => {
-    ctx.session.newOffer = { step: "name" }
-    await ctx.reply("Введите название продукта:")
-  })
-)
-
-bot.hears(
-  "👥 Список клиентов",
-  adminOnly(async (ctx) => {
-    const users = await fetchAllUsers()
-    if (!users.length) {
-      return ctx.reply("Пользователи отсутствуют.")
-    }
-    const lines = users.map(
-      (u) => `#${u.id} ${u.fullName} ${u.phone} (${u.email})`
-    )
-    await ctx.reply(lines.join("\n"))
-  })
-)
-
-function adminOnly(handler) {
-  return async (ctx) => {
-    if (ctx.chat.id !== ADMIN_CHAT_ID) {
-      await ctx.reply("🚫 У вас нет прав для выполнения этой команды.")
-      return
-    }
-    await handler(ctx)
   }
 }
 
