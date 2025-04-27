@@ -9,13 +9,10 @@ const {
   OrderCourse,
   Waitlist,
   CourseBlock,
-  Service,
-  Offer,
 } = require("../models/models")
 const courseService = require("../services/courseService")
 const ApiError = require("../error/ApiError")
 const { Op } = require("sequelize")
-const { Console } = require("console")
 
 const courseFilling = async (
   title,
@@ -33,7 +30,7 @@ const courseFilling = async (
   const imgFileName = uuid.v4() + ".jpg"
   img.mv(path.resolve(__dirname, "..", "static", imgFileName))
 
-  const offer = await saveImageAndCreateOffer({
+  const offer = await courseService.saveImageAndCreateOffer({
     name: title, // берем title как name
     description: subTitle, // subTitle как описание
     price,
@@ -104,28 +101,6 @@ const courseFilling = async (
 
   console.log("ADDITIONAL BLOCKS SAVED!")
   return course
-}
-
-const saveImageAndCreateOffer = async ({
-  name,
-  description,
-  price,
-  type,
-  img,
-}) => {
-  const imgFileName = uuid.v4() + ".jpg"
-  img.mv(path.resolve(__dirname, "..", "static", imgFileName))
-
-  const offer = await Offer.create({
-    name,
-    description,
-    price: parseInt(price),
-    type,
-    img: imgFileName,
-  })
-
-  console.log("OFFER CREATED!")
-  return offer
 }
 
 class CourseController {

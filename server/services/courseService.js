@@ -1,7 +1,7 @@
 // services/courseService.js
 
-const { Course, Lesson, Service } = require("../models")
-const { saveImageAndCreateOffer } = require("../utils/fileService") // предположительно у тебя где-то так называется
+const { Course, Lesson, Service, Offer } = require("../models")
+const { saveImageAndCreateOffer } = require("../utils/fileService")
 
 class CourseService {
   async getAllOffers() {
@@ -53,8 +53,23 @@ class CourseService {
       return result
     } catch (error) {
       console.error("Error creating base offer:", error.message)
-      throw error // чтобы можно было поймать выше
+      throw error
     }
+  }
+  async saveImageAndCreateOffer({ name, description, price, type, img }) {
+    const imgFileName = uuid.v4() + ".jpg"
+    img.mv(path.resolve(__dirname, "..", "static", imgFileName))
+
+    const offer = await Offer.create({
+      name,
+      description,
+      price: parseInt(price),
+      type,
+      img: imgFileName,
+    })
+
+    console.log("OFFER CREATED!")
+    return offer
   }
 }
 
