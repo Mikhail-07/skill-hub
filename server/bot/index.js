@@ -38,19 +38,29 @@ function buildAdminKeyboard() {
   ])
 }
 
-function buildStartKeyboard() {
-  return Markup.inlineKeyboard([Markup.button.callback("START", "start_flow")])
-}
-
 // --------------------
-// /start -> только кнопка START
+// /start
+// --------------------
 bot.start(async (ctx) => {
-  // Сбросим сессию аккуратно
   ctx.session = {}
-  await ctx.reply(
-    "Добро пожаловать! Нажмите START для продолжения",
-    buildStartKeyboard()
-  )
+  const isAdmin = ctx.chat.id === ADMIN_CHAT_ID
+
+  const text = isAdmin
+    ? "Добро пожаловать, Админ!"
+    : "Привет! Выберите продукт для регистрации:"
+
+  let keyboard
+  if (isAdmin) {
+    keyboard = buildAdminKeyboard()
+  } else {
+    const offers = await getAllOffers()
+    keyboard = buildOffersKeyboard(offers)
+  }
+
+  await ctx.reply(text, {
+    ...keyboard,
+    ...buildMenuKeyboard(isAdmin),
+  })
 })
 
 // --------------------
@@ -296,6 +306,24 @@ bot.action("admin_add_offer", async (ctx) => {
   ctx.session.newOffer = { step: "name" }
   await ctx.reply("Введите название продукта:")
 })
+
+// ----------------
+// Функция для создания бургер меню
+// ----------------
+
+function buildMenuKeyboard(isAdmin) {
+  if (isAdmin) {
+    return Markup.keyboard([
+      ["🏠 Главное меню", "👥 Клиенты", "➕ Добавить продукт"],
+    ])
+      .resize()
+      .oneTime(false)
+  } else {
+    return Markup.keyboard([["🏠 Главное меню"]])
+      .resize()
+      .oneTime(false)
+  }
+}
 
 // ----------------
 // Запуск бота
