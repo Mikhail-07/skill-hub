@@ -23,6 +23,16 @@ async function registrationFromBot({ chatId, name, surname, phone, email }) {
   return user
 }
 
+async function findUserByEmail(email) {
+  return await User.findOne({ where: { email } })
+}
+
+async function findUserByChatId(chatId) {
+  return await User.findOne({ where: { chatId } })
+}
+
 module.exports = {
   registrationFromBot,
+  findUserByEmail,
+  findUserByChatId,
 }

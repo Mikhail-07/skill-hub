@@ -8,7 +8,6 @@ const LocalSession = require("telegraf-session-local")
 const { addToWaitlist } = require("../controllers/coursesController")
 const {
   findUserByChatId,
-  registration,
   fetchAllUsers,
 } = require("../controllers/userController")
 const { getAllOffers, createService } = require("../services/courseService")

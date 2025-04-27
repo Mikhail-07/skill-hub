@@ -11,6 +11,7 @@ const {
   AvailableLesson,
   UserGroup,
 } = require("../models/models")
+const userService = require("../services/userService")
 
 const generateJwt = (id, email, role, name, surname) => {
   return jwt.sign({ id, email, name, surname, role }, process.env.SECRET_KEY, {
@@ -19,14 +20,6 @@ const generateJwt = (id, email, role, name, surname) => {
 }
 
 class UserController {
-  async findUserByEmail(email) {
-    return await User.findOne({ where: { email } })
-  }
-
-  async findUserByChatId(chatId) {
-    return await User.findOne({ where: { chatId } })
-  }
-
   async registration(req, res, next) {
     try {
       const { email, password, name, surname, role, chatId, phone } = req.body
@@ -37,9 +30,9 @@ class UserController {
 
       let candidate
       if (email) {
-        candidate = await this.findUserByEmail(email)
+        candidate = await userService.findUserByEmail(email)
       } else {
-        candidate = await this.findUserByChatId(chatId)
+        candidate = await userService.findUserByChatId(chatId)
       }
 
       if (candidate) {
