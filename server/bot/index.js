@@ -131,11 +131,12 @@ bot.action(/register_(\d+)/, async (ctx) => {
 // Получить все продукты админу
 bot.action("admin_all_offers", async (ctx) => {
   const offers = await getAllOffers()
+  console.log("Предложения: ", offers)
   if (!offers.length) {
     return ctx.reply("Нет доступных предложений.")
   }
   const keyboard = buildOffersKeyboard(offers)
-  await ctx.editMessageText("Все доступные предложения:", keyboard)
+  await ctx.reply("Все доступные предложения:", keyboard)
 })
 // --------------------
 
