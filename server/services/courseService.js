@@ -34,7 +34,7 @@ async function saveImageAndCreateOffer({
     name,
     description,
     price: parseInt(price, 10),
-    type,
+    type: "service",
     img: imgFileName,
   })
 
