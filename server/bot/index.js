@@ -20,7 +20,12 @@ const REPORT_CHAT_ID = process.env.REPORT_CHAT_ID || 368991424
 const ADMIN_CHAT_ID = 368991424
 
 const bot = new Telegraf(BOT_TOKEN)
-bot.use(session()) // enable per-user session storage
+bot.use((ctx, next) => {
+  if (!ctx.session) {
+    ctx.session = {}
+  }
+  return next()
+})
 
 // ---------------
 // Helper methods
