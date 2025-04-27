@@ -348,13 +348,6 @@ class CourseController {
 
   async addToWaitlist({ userId, offerId }) {
     try {
-      // Проверяем, есть ли пользователь с такими данными
-      let user = await User.findOne({
-        where: {
-          userId,
-        },
-      })
-
       // Проверяем, есть ли уже запись в Waitlist для данного пользователя и курса
       const existingWaitlistEntry = await Waitlist.findOne({
         where: {

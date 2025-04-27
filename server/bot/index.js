@@ -163,7 +163,7 @@ bot.action(/register_(\d+)/, async (ctx) => {
   if (!offer) {
     return ctx.reply("Сессия устарела, выберите оффер заново.")
   }
-
+  // Проверяем, есть ли пользователь с такими данными
   const user = await userService.findUserByChatId(chatId)
   if (!user) {
     // Начинаем сбор данных
@@ -202,8 +202,8 @@ bot.action("admin_all_offers", async (ctx) => {
       reply_markup: {
         inline_keyboard: offers.map((offer) => [
           {
-            text: offer.name, // <-- тут выводим name
-            callback_data: `offer_${offer.id}`, // <-- например, чтобы потом обработать выбор оффера
+            text: offer.name,
+            callback_data: `offer_${offer.id}`,
           },
         ]),
       },
