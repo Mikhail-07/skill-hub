@@ -45,6 +45,12 @@ function buildAdminKeyboard() {
 bot.start(async (ctx) => {
   ctx.session = {}
   const isAdmin = ctx.chat.id === ADMIN_CHAT_ID
+
+  console.log("id админа: ", ADMIN_CHAT_ID)
+  isAdmin
+    ? console.log("Вошел админ с id", ctx.chat.id)
+    : console.log("Вошел пользователь с id", ctx.chat.id)
+
   // const isAdmin = false
 
   const text = isAdmin
@@ -183,7 +189,7 @@ bot.action(/register_(\d+)/, async (ctx) => {
   const userLink = ctx.from.username
     ? `https://t.me/${ctx.from.username}`
     : "аккаунт без username"
-  const report = `Новая заявка на: *${ctx.session.selectedOffer}*!\nИмя: ${user.name} ${user.surname}\nTelegram: ${userLink}`
+  const report = `Новая заявка на: ${ctx.session.selectedOffer.name}!\nИмя: ${user.name} ${user.surname}\nTelegram: ${userLink}`
   await ctx.telegram.sendMessage(REPORT_CHAT_ID_1, report)
   await ctx.telegram.sendMessage(REPORT_CHAT_ID_2, report)
 
