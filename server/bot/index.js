@@ -46,14 +46,14 @@ bot.start(async (ctx) => {
   ctx.session = {}
 
   console.log("Тип чат ид: ", typeof ctx.chat.id)
-  console.log("Тип ид из env: ", typeof ctx.chat.id)
+  console.log("Тип ид из env: ", typeof ADMIN_CHAT_ID)
 
-  const isAdmin = ctx.chat.id === ADMIN_CHAT_ID
+  const isAdmin = ctx.chat.id == ADMIN_CHAT_ID
 
   console.log("id админа: ", ADMIN_CHAT_ID)
   isAdmin
     ? console.log("Вошел админ с id", ctx.chat.id)
-    : console.log("Вошел пользователь с id", ctx.chat.id)
+    : console.log("Вошел пользователь с id", ADMIN_CHAT_ID)
 
   // const isAdmin = false
 
@@ -112,7 +112,7 @@ bot.hears(
 
 function adminOnly(handler) {
   return async (ctx) => {
-    if (ctx.chat.id !== ADMIN_CHAT_ID) {
+    if (ctx.chat.id != ADMIN_CHAT_ID) {
       await ctx.reply("🚫 У вас нет прав для выполнения этой команды.")
       return
     }
@@ -123,7 +123,7 @@ function adminOnly(handler) {
 // --------------------
 // Главное меню после нажатия START
 bot.action("start_flow", async (ctx) => {
-  const isAdmin = ctx.chat.id === ADMIN_CHAT_ID
+  const isAdmin = ctx.chat.id == ADMIN_CHAT_ID
   // const isAdmin = false
 
   const text = isAdmin
