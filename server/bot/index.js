@@ -5,10 +5,7 @@
 // -------------------------
 const { Telegraf, Markup } = require("telegraf")
 const LocalSession = require("telegraf-session-local")
-const {
-  getAllOffers,
-  addToWaitlist,
-} = require("../controllers/coursesController")
+const { addToWaitlist } = require("../controllers/coursesController")
 const {
   findUserByChatId,
   registration,
