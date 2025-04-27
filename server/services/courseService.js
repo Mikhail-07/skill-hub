@@ -43,22 +43,26 @@ async function saveImageAndCreateOffer({
   type,
   img,
 }) {
-  console.log(
-    "saveImageAndCreateOffer вызван с: ",
-    name,
-    description,
-    price,
-    type,
-    img
-  )
+  let imgFileName = null
 
-  const imgFileName = uuid.v4() + ".jpg"
-  img.mv(path.resolve(__dirname, "..", "static", imgFileName))
+  if (img && img.mimetype && img.mimetype.startsWith("image/")) {
+    try {
+      imgFileName = uuid.v4() + path.extname(img.name) // сохраняем оригинальное расширение
+      await img.mv(path.resolve(__dirname, "..", "static", imgFileName))
+    } catch (error) {
+      console.error("Ошибка при сохранении изображения:", error)
+      imgFileName = null // если не удалось сохранить, продолжаем без картинки
+    }
+  } else {
+    console.log(
+      "Файл отсутствует или не является изображением. Сохраняем без картинки."
+    )
+  }
 
   const offer = await Offer.create({
     name,
     description,
-    price: parseInt(price),
+    price: parseInt(price, 10),
     type,
     img: imgFileName,
   })
