@@ -315,16 +315,16 @@ bot.on("text", async (ctx) => {
             return ctx.reply("Пожалуйста, введите корректное число:")
           }
           offer.price = price
-          offer.step = "img"
-          await ctx.reply("Введите URL изображения:")
-          break
-        case "img":
-          offer.img = text
+          // offer.step = "img"
+          // await ctx.reply("Введите URL изображения:")
+          // break
+          // case "img":
+          //   offer.img = text
           // offer.step = "type"
           // await ctx.reply("Введите тип продукта (course/service):")
-          break
-        case "type":
-          offer.type = text
+          // break
+          // case "type":
+          //   offer.type = text
           await createService(offer)
           await ctx.reply("✅ Продукт успешно создан!")
           delete ctx.session.newOffer
