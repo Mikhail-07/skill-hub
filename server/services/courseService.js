@@ -3,36 +3,7 @@ const uuid = require("uuid")
 const { Course, Lesson, Service, Offer } = require("../models/models")
 
 async function getAllOffers() {
-  const courses = await Course.findAll({
-    include: [{ model: Lesson, attributes: ["id", "title"] }],
-  })
-
-  const services = await Service.findAll()
-
-  const courseOffers = courses.map((course) => ({
-    id: course.id,
-    type: "course",
-    title: course.title,
-    subTitle: course.subTitle,
-    description: course.description,
-    img: course.img,
-    price: course.price,
-    category: course.category,
-    lessons: course.lessons || [],
-  }))
-
-  const serviceOffers = services.map((service) => ({
-    id: service.id,
-    type: "service",
-    name: service.name,
-    description: service.description,
-    price: service.price,
-    img: service.img,
-    serviceType: service.type,
-  }))
-
-  const offers = [...courseOffers, ...serviceOffers]
-
+  const offers = await Offer.findAll()
   return offers
 }
 

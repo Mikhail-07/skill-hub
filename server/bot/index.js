@@ -130,13 +130,30 @@ bot.action(/register_(\d+)/, async (ctx) => {
 // --------------------
 // Получить все продукты админу
 bot.action("admin_all_offers", async (ctx) => {
-  const offers = await getAllOffers()
-  console.log("Предложения: ", offers)
-  if (!offers.length) {
-    return ctx.reply("Нет доступных предложений.")
+  try {
+    const offers = await getAllOffers()
+    console.log("Предложения:", offers)
+
+    if (!offers.length) {
+      return ctx.reply("Нет доступных предложений.")
+    }
+
+    const keyboard = {
+      reply_markup: {
+        inline_keyboard: offers.map((offer) => [
+          {
+            text: offer.name, // <-- тут выводим name
+            callback_data: `offer_${offer.id}`, // <-- например, чтобы потом обработать выбор оффера
+          },
+        ]),
+      },
+    }
+
+    await ctx.reply("Все доступные предложения:", keyboard)
+  } catch (error) {
+    console.error("Ошибка при получении предложений:", error)
+    await ctx.reply("Произошла ошибка при получении предложений.")
   }
-  const keyboard = buildOffersKeyboard(offers)
-  await ctx.reply("Все доступные предложения:", keyboard)
 })
 // --------------------
 
