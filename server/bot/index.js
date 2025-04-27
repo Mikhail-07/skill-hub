@@ -44,6 +44,10 @@ function buildAdminKeyboard() {
 // --------------------
 bot.start(async (ctx) => {
   ctx.session = {}
+
+  console.log("Тип чат ид: ", typeof ctx.chat.id)
+  console.log("Тип ид из env: ", typeof ctx.chat.id)
+
   const isAdmin = ctx.chat.id === ADMIN_CHAT_ID
 
   console.log("id админа: ", ADMIN_CHAT_ID)
